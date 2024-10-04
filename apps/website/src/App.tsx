@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import "./App.css";
+import { trpc } from "~/libs/api";
 import reactLogo from "./assets/react.svg";
-import { trpc } from "./libs/api";
 import viteLogo from "/vite.svg";
 
 function App() {
   const [count, setCount] = useState(0);
-  const [name, setName] = useState("");
+  const [name, setName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     trpc.test.test.query().then((data) => {
