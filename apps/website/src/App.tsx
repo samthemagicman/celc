@@ -1,25 +1,101 @@
-import React from "react";
+import { ClockIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
+import React, { useEffect, useMemo, useRef } from "react";
 import { cn } from "./lib/utils";
 
 const rowHeight = "8em";
 
-const numberToTime = (n: number) => {
-  if (n > 12) {
-    return `${n - 12}pm`;
+const numberToTime = (n: number, showMinutes: boolean = false) => {
+  const hour = Math.floor(n);
+  const minutes = Math.round((n - hour) * 60);
+
+  // Format minutes to always show two digits
+  const formattedMinutes = minutes === 0 ? "00" : `${minutes}`;
+
+  if (showMinutes) {
+    if (hour === 0) {
+      return `12:${formattedMinutes}am`; // Midnight case
+    } else if (hour > 12) {
+      return `${hour - 12}:${formattedMinutes}pm`;
+    } else if (hour === 12) {
+      return `12:${formattedMinutes}pm`; // Noon case
+    } else {
+      return `${hour}:${formattedMinutes}am`;
+    }
+  }
+
+  // If not showing minutes
+  if (hour === 0) {
+    return `12am`; // Midnight case
+  } else if (hour > 12) {
+    return `${hour - 12}pm`;
+  } else if (hour === 12) {
+    return `12pm`; // Noon case
   } else {
-    return `${n}am`;
+    return `${hour}am`;
   }
 };
 
 function App() {
   return (
     <div className="">
-      <Calendar startHour={7} endHour={24}>
-        <CalendarEvent startHour={9.5} endHour={10} />
+      <Calendar
+        startHour={7}
+        endHour={24}
+        events={[
+          {
+            startHour: 7.5,
+            endHour: 9,
+            title: "Breakfast",
+            location: "Room 102",
+          },
+          {
+            startHour: 7.5,
+            endHour: 8,
+            title: "Breakfast",
+            location: "Room 102",
+          },
+          {
+            startHour: 9,
+            endHour: 12,
+            title: "Meeting with Parents",
+            location: "Room 102",
+          },
+          {
+            startHour: 9,
+            endHour: 12,
+            title: "Meeting",
+            location: "Room 102",
+          },
+          {
+            startHour: 9,
+            endHour: 12,
+            title: "Meeting",
+            location: "Room 102",
+          },
+          {
+            startHour: 9,
+            endHour: 12,
+            title: "Meeting",
+            location: "Room 102",
+          },
+          {
+            startHour: 12,
+            endHour: 12.25,
+            title: "Break",
+          },
+          {
+            startHour: 12.25,
+            endHour: 14,
+            title: "Meeting",
+            location: "Room 102",
+          },
+        ]}
+      >
+        {/* <CalendarEvent startHour={9.5} endHour={10} />
         <EventColumnContainer startHour={7.5}>
           <CalendarEvent startHour={7.5} endHour={8} />
           <CalendarEvent startHour={8} endHour={9} />
-        </EventColumnContainer>
+        </EventColumnContainer> */}
       </Calendar>
     </div>
   );
@@ -38,17 +114,92 @@ const useCalendar = () => {
   return context;
 };
 
+type CalendarEvent = {
+  startHour: number;
+  endHour: number;
+  title: string;
+  location?: string;
+};
+
 type CalendarProps = {
   startHour: number;
   endHour: number;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  events?: CalendarEvent[];
 };
 const Calendar: React.FC<CalendarProps> = ({
   children,
   startHour,
   endHour,
+  events,
 }) => {
   const rows = Array.from({ length: endHour - startHour + 1 });
+
+  function RenderEvent(event: CalendarEvent) {
+    return (
+      <CalendarEvent
+        title={event.title}
+        startHour={event.startHour}
+        endHour={event.endHour}
+        location={event.location}
+      />
+    );
+  }
+
+  const overlappingEvents = useMemo(() => {
+    if (!events) {
+      return [];
+    }
+    events.sort((a, b) => a.startHour - b.startHour);
+
+    const groupedEvents = [];
+
+    let currentGroup = null;
+
+    for (const event of events) {
+      if (!currentGroup) {
+        // Start a new group with the first event
+        currentGroup = {
+          minStartHour: event.startHour,
+          events: [event],
+        };
+        groupedEvents.push(currentGroup);
+      } else {
+        const lastEventInGroup =
+          currentGroup.events[currentGroup.events.length - 1];
+
+        // Check if the current event overlaps with the last event in the group
+        if (event.startHour < lastEventInGroup.endHour) {
+          // Overlapping event, add to the current group
+          currentGroup.events.push(event);
+          // Update minStartHour if necessary
+          currentGroup.minStartHour = Math.min(
+            currentGroup.minStartHour,
+            event.startHour,
+          );
+        } else {
+          // No overlap, start a new group
+          currentGroup = {
+            minStartHour: event.startHour,
+            events: [event],
+          };
+          groupedEvents.push(currentGroup);
+        }
+      }
+    }
+
+    return groupedEvents;
+  }, [events]);
+
+  // const nonOverlappingEvents = useMemo(() => {
+  //   if (!events) {
+  //     return [];
+  //   }
+  //   return events.filter((event) => {
+  //     return !overlappingEvents.some((events) => events.events.includes(event));
+  //   });
+  // }, [overlappingEvents]);
+
   return (
     <CalendarContext.Provider
       value={{
@@ -80,6 +231,16 @@ const Calendar: React.FC<CalendarProps> = ({
               }}
             ></div>
           ))}
+          {/* {nonOverlappingEvents.map((event, i) => (
+            <RenderEvent key={i} {...event} />
+          ))} */}
+          {overlappingEvents.map((groupEvent) => (
+            <EventColumnContainer startHour={groupEvent.minStartHour}>
+              {groupEvent.events.map((event, j) => (
+                <RenderEvent key={j} {...event} />
+              ))}
+            </EventColumnContainer>
+          ))}
           {children}
         </div>
       </div>
@@ -110,7 +271,7 @@ const EventColumnContainer: React.FC<{
           top: `calc(1px/2 + ${rowHeight}*${row} + ${offset})`, // Margins + offset by 2 hours
         }}
       >
-        <div className="w-full h-full flex flex-row gap-2">{children}</div>
+        <div className="w-full h-full flex flex-row gap-1">{children}</div>
       </div>
     </EventColumnContainerContext.Provider>
   );
@@ -120,7 +281,9 @@ const CalendarEvent: React.FC<{
   startHour: number;
   endHour: number;
   className?: string;
-}> = ({ startHour, endHour, className }) => {
+  location?: string;
+  title: string;
+}> = ({ startHour, endHour, className, location, title }) => {
   // const rowHeight = "(100% / 24)";
   // const offset = "0.5em";
   const calendar = React.useContext(CalendarContext);
@@ -130,10 +293,19 @@ const CalendarEvent: React.FC<{
     : startHour - (calendar?.startHour ?? 0);
   const hourLength = endHour - startHour;
 
+  const contentDiv = useRef<HTMLDivElement>(null);
+  const [divHeight, setDivHeight] = React.useState<number | null>(null);
+
+  useEffect(() => {
+    if (contentDiv.current) {
+      setDivHeight(contentDiv.current.clientHeight);
+    }
+  }, [contentDiv]);
+
   return (
     <div
       className={cn(
-        "w-full z-30 py-[0.1rem]",
+        "w-full z-30 py-[0.1rem] select-none cursor-pointer",
         !calendarRow && "absolute",
         className,
       )}
@@ -142,18 +314,41 @@ const CalendarEvent: React.FC<{
         marginTop: calendarRow ? `calc(${rowHeight}*${row})` : undefined, // Margins + offset by 2 hours
         height: `calc(${rowHeight} * ${hourLength})`, // 8 hours and 50 minutes
       }}
+      ref={contentDiv}
     >
       <div className="w-full h-full bg-green-700/80 rounded-lg relative overflow-hidden flex flex-row">
-        <div className="w-3 h-full bg-green-700"></div>
-        <div className="p-2 flex flex-col gap-1">
-          <div>
-            <p className="text-white tracking-wider font-semibold text-ellipsis">
-              Breakfast
+        {/* <div className="w-3 h-full bg-green-700"></div> */}
+        <div className="px-2 py-1 flex flex-col gap-1">
+          <div className="">
+            <p
+              className={cn(
+                "text-white tracking-wider font-semibold text-ellipsis break-all line-clamp-1",
+                "xs:break-normal xs:line-clamp-none",
+              )}
+            >
+              {title}
             </p>
           </div>
-          <div className="flex flex-col">
-            <p className="text-white text-sm">3:00am - 5:00am</p>
-            <p className="text-white text-sm">Room 102</p>
+          {/* Hide if height is too small */}
+          <div
+            className={cn(
+              "flex flex-col",
+              divHeight && divHeight < 100 && "hidden",
+            )}
+          >
+            <div className="flex flex-row items-center gap-1">
+              <ClockIcon className="w-[1em] h-[1em] text-white" />
+              <p className="flex-1 text-white text-sm">
+                {numberToTime(startHour, true)} - {numberToTime(endHour, true)}
+              </p>
+            </div>
+
+            {location && (
+              <div className="flex flex-row items-center gap-1">
+                <PaperPlaneIcon className="w-4 h-4 text-white" />
+                <p className="text-white text-sm">{location}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
