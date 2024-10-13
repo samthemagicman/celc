@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { trpc } from "~/libs/api";
+import { Button } from "~/components/ui/button";
+import { trpc } from "~/lib/api";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 
@@ -16,6 +17,7 @@ function App() {
   return (
     <>
       <div>
+        <Button>hey</Button>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
