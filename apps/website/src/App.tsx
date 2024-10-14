@@ -504,7 +504,7 @@ const CalendarEvent2: React.FC<{
   return (
     <div
       className={cn(
-        "w-full z-30 select-none cursor-pointer p-px active:opacity-80 active:scale-[98%] duration-100 transition-all",
+        "w-full z-30 select-none cursor-pointer p-px active:opacity-90 duration-100 transition-all",
         !calendarRow && "absolute",
         className,
       )}

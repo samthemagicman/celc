@@ -12,11 +12,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@repo/database": "workspace:*",
     "@repo/trpc": "workspace:*",
     "@trpc/client": "11.0.0-rc.553",
     "@trpc/server": "11.0.0-rc.553"
   },
   "devDependencies": {
+    "@types/node": "^22.7.4",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2"
   }
