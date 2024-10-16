@@ -8,21 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@repo/database':
-        specifier: workspace:*
-        version: link:../database
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../types
-      '@trpc/server':
-        specifier: 11.0.0-rc.553
-        version: 11.0.0-rc.553
-      drizzle-zod:
-        specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.35.0)(zod@3.23.8)
-      zod:
-        specifier: ^3.23.8
-        version: 3.23.8
+      drizzle-orm:
+        specifier: ^0.34.1
+        version: 0.34.1
     devDependencies:
       typescript:
         specifier: ^5.6.2
@@ -30,11 +18,8 @@ importers:
 
 packages:
 
-  '@trpc/server@11.0.0-rc.553':
-    resolution: {integrity: sha512-pYUhxV3QU834jP1ugJk1uhtPwwaY1ymIuupb4DiWOhNCl68syuXPlUdD8IYsYKd3BjLkmnjlsOUMoyd/aoOF/Q==}
-
-  drizzle-orm@0.35.0:
-    resolution: {integrity: sha512-fyTKnQ6WZQqSUy6yM4Do2tJPBg1ALR0vJtO9xUTLLubD+0qS1PPuu8aVOeLZQo+g8RPJn+Vqoh30/3lSS8/a2w==}
+  drizzle-orm@0.34.1:
+    resolution: {integrity: sha512-t+zCwyWWt8xTqtYV4doE/xYmT7hpv1L8pQ66zddEz+3VWyedBBtctjMAp22mAJPfyWurRQXUJ1nrTtqLq+DqNA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -122,31 +107,13 @@ packages:
       sqlite3:
         optional: true
 
-  drizzle-zod@0.5.1:
-    resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
-    peerDependencies:
-      drizzle-orm: '>=0.23.13'
-      zod: '*'
-
   typescript@5.6.2:
     resolution: {integrity: sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
-  zod@3.23.8:
-    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
-
 snapshots:
 
-  '@trpc/server@11.0.0-rc.553': {}
-
-  drizzle-orm@0.35.0: {}
-
-  drizzle-zod@0.5.1(drizzle-orm@0.35.0)(zod@3.23.8):
-    dependencies:
-      drizzle-orm: 0.35.0
-      zod: 3.23.8
+  drizzle-orm@0.34.1: {}
 
   typescript@5.6.2: {}
-
-  zod@3.23.8: {}
