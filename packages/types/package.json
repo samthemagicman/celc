@@ -15,7 +15,8 @@
       "require": "./build/index.ts",
       "types": "./build/index.ts"
     },
-    "./database": "./src/database/index.ts"
+    "./database": "./src/database/index.ts",
+    "./database/schema": "./src/database/schema.ts"
   },
   "keywords": [],
   "author": "",

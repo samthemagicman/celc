@@ -1,7 +1,7 @@
 import { eq } from "@repo/database";
 import { EventInsert, schema } from "@repo/types/database";
 import { z } from "zod";
-import { adminProcedure, router } from "~/trpc";
+import { adminProcedure, router } from "../../trpc";
 
 const CreateEventInput = z.custom<EventInsert>();
 const DeleteEventInput = z.object({
@@ -23,4 +23,7 @@ export const eventRouter = router({
     .mutation(async ({ input, ctx }) => {
       await ctx.db.delete(schema.event).where(eq(schema.event.id, input.id));
     }),
+  getAllEvents: adminProcedure.query(async ({ ctx }) => {
+    return await ctx.db.select().from(schema.event);
+  }),
 });

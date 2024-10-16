@@ -34,7 +34,7 @@ const canPlaceInColumn = (event: Event, column: EventColumn) => {
   return getOverlappingEvents(event, column).length === 0;
 };
 
-const organizeEvents = (events: EventColumn) => {
+export const organizeEvents = (events: EventColumn) => {
   const groupedEvents: EventColumnGroup = [];
 
   //sort events by start time
@@ -60,107 +60,106 @@ const organizeEvents = (events: EventColumn) => {
   return groupedEvents;
 };
 
-const events: EventColumn = [
-  {
-    startHour: 7.5,
-    endHour: 8.5,
-    backgroundColor: EventBackgroundColors.Blue,
-    title: "Breakfast",
-    location: "Room 102",
-  },
-  {
-    startHour: 8.5,
-    endHour: 10,
-    title: "Opening Ceremonies",
-    backgroundColor: EventBackgroundColors.Purple,
-    location: "Room 102",
-  },
-  {
-    startHour: 10,
-    endHour: 10.25,
-    title: "Break",
-    backgroundColor: EventBackgroundColors.Green,
-  },
-  {
-    startHour: 10.25,
-    endHour: 11,
-    title: "Equity, Diversity, & Inclusion Training",
-    backgroundColor: EventBackgroundColors.Purple,
-    location: "Room 102",
-  },
-  {
-    startHour: 11,
-    endHour: 11.5,
-    title: "Break",
-    backgroundColor: EventBackgroundColors.Green,
-  },
+// const events: EventColumn = [
+//   {
+//     startHour: 7.5,
+//     endHour: 8.5,
+//     backgroundColor: EventBackgroundColors.Blue,
+//     title: "Breakfast",
+//     location: "Room 102",
+//   },
+//   {
+//     startHour: 8.5,
+//     endHour: 10,
+//     title: "Opening Ceremonies",
+//     backgroundColor: EventBackgroundColors.Purple,
+//     location: "Room 102",
+//   },
+//   {
+//     startHour: 10,
+//     endHour: 10.25,
+//     title: "Break",
+//     backgroundColor: EventBackgroundColors.Green,
+//   },
+//   {
+//     startHour: 10.25,
+//     endHour: 11,
+//     title: "Equity, Diversity, & Inclusion Training",
+//     backgroundColor: EventBackgroundColors.Purple,
+//     location: "Room 102",
+//   },
+//   {
+//     startHour: 11,
+//     endHour: 11.5,
+//     title: "Break",
+//     backgroundColor: EventBackgroundColors.Green,
+//   },
 
-  {
-    startHour: 11.5,
-    endHour: 12.5,
-    location: "Room 102",
-    title: "Governance",
-  },
-  {
-    startHour: 11.5,
-    endHour: 12.5,
-    title: "Session 1",
-    backgroundColor: EventBackgroundColors.Red,
-    location: "Room 102",
-  },
-  {
-    startHour: 11.5,
-    endHour: 12.5,
-    title: "Session 2",
-    backgroundColor: EventBackgroundColors.Yellow,
-    location: "Room 102",
-  },
-  {
-    startHour: 11.5,
-    endHour: 12.5,
-    title: "Session 3",
-    backgroundColor: EventBackgroundColors.Blue,
-    location: "Room 102",
-  },
-  {
-    startHour: 12.5,
-    endHour: 13.5,
-    title: "Lunch",
-    location: "Room 102",
-    backgroundColor: EventBackgroundColors.Blue,
-  },
+//   {
+//     startHour: 11.5,
+//     endHour: 12.5,
+//     location: "Room 102",
+//     title: "Governance",
+//   },
+//   {
+//     startHour: 11.5,
+//     endHour: 12.5,
+//     title: "Session 1",
+//     backgroundColor: EventBackgroundColors.Red,
+//     location: "Room 102",
+//   },
+//   {
+//     startHour: 11.5,
+//     endHour: 12.5,
+//     title: "Session 2",
+//     backgroundColor: EventBackgroundColors.Yellow,
+//     location: "Room 102",
+//   },
+//   {
+//     startHour: 11.5,
+//     endHour: 12.5,
+//     title: "Session 3",
+//     backgroundColor: EventBackgroundColors.Blue,
+//     location: "Room 102",
+//   },
+//   {
+//     startHour: 12.5,
+//     endHour: 13.5,
+//     title: "Lunch",
+//     location: "Room 102",
+//     backgroundColor: EventBackgroundColors.Blue,
+//   },
 
-  {
-    startHour: 13.5,
-    endHour: 14.5,
-    title: "Governance",
-    location: "Room 102",
-  },
-  {
-    startHour: 13.5,
-    endHour: 14.5,
-    title: "Session 1",
-    backgroundColor: EventBackgroundColors.Red,
-    location: "Room 102",
-  },
-  {
-    startHour: 13.5,
-    endHour: 14.5,
-    title: "Session 2",
-    backgroundColor: EventBackgroundColors.Yellow,
-    location: "Room 102",
-  },
-  {
-    startHour: 13.5,
-    endHour: 14.5,
-    title: "Session 3",
-    backgroundColor: EventBackgroundColors.Blue,
-    location: "Room 102",
-  },
-];
+//   {
+//     startHour: 13.5,
+//     endHour: 14.5,
+//     title: "Governance",
+//     location: "Room 102",
+//   },
+//   {
+//     startHour: 13.5,
+//     endHour: 14.5,
+//     title: "Session 1",
+//     backgroundColor: EventBackgroundColors.Red,
+//     location: "Room 102",
+//   },
+//   {
+//     startHour: 13.5,
+//     endHour: 14.5,
+//     title: "Session 2",
+//     backgroundColor: EventBackgroundColors.Yellow,
+//     location: "Room 102",
+//   },
+//   {
+//     startHour: 13.5,
+//     endHour: 14.5,
+//     title: "Session 3",
+//     backgroundColor: EventBackgroundColors.Blue,
+//     location: "Room 102",
+//   },
+// ];
 
-const eventGroup = organizeEvents(events);
-console.log([eventGroup]);
+// const eventGroup = organizeEvents(events);
 
 const numberToTime = (n: number, showMinutes: boolean = false) => {
   const hour = Math.floor(n);
@@ -274,7 +273,7 @@ function App() {
         //     title: "Case Competition",
         //   },
         // ]}
-        events={[eventGroup]}
+        // events={[eventGroup]}
       >
         <CurrentTimeIndicator />
         {/* <CalendarEvent startHour={9.5} endHour={10} />
@@ -349,7 +348,7 @@ type CalendarProps = {
   children?: React.ReactNode;
   events?: EventColumnGroup[];
 };
-const Calendar: React.FC<CalendarProps> = ({
+export const Calendar: React.FC<CalendarProps> = ({
   children,
   startHour,
   endHour,
@@ -359,10 +358,13 @@ const Calendar: React.FC<CalendarProps> = ({
 
   return (
     <CalendarContext.Provider
-      value={{
-        startHour,
-        endHour,
-      }}
+      value={useMemo(
+        () => ({
+          startHour,
+          endHour,
+        }),
+        [startHour, endHour],
+      )}
     >
       <div className="flex flex-row relative">
         <div className="flex flex-col items-center px-1">
@@ -404,7 +406,7 @@ const Calendar: React.FC<CalendarProps> = ({
                       const overlapping = nextColumn.some((e) => {
                         return getOverlappingEvents(event, e).length > 0;
                       });
-                      console.log(overlapping);
+
                       if (!overlapping) {
                         columnWidth =
                           (1 / columnCount) * (nextColumn.length + 1);

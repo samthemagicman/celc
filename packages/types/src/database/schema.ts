@@ -1,6 +1,6 @@
 import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const event = sqliteTable("events", {
+export const event = sqliteTable("event", {
   id: int().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   location: text().notNull(),
