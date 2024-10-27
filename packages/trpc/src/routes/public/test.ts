@@ -1,7 +1,7 @@
 import { publicProcedure, router } from "../../trpc";
 
 export const testRouter = router({
-  test: publicProcedure.query((opts) => {
+  test: publicProcedure.query(() => {
     return "whatsup"
   })
 })

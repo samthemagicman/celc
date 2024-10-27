@@ -5,11 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "pnpm run --filter api dev",
+    "dev": "pnpm run with-env pnpm run --filter api --filter website dev",
     "website": "pnpm run --filter website dev",
-    "api": "pnpm run --filter api dev",
+    "with-env": "dotenv -e ./.env --",
+    "api": "pnpm run with-env pnpm run --filter api dev",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:push": "pnpm run with-env pnpm run --filter database db:push",
+    "db:studio": "pnpm run with-env pnpm run --filter database db:studio"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +23,18 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.10.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
     "typescript-eslint": "^8.8.0"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,tsx}": [
+      "eslint --fix"
+    ],
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
   }
 }
