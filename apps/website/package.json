@@ -13,6 +13,7 @@
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@repo/trpc": "workspace:*",
+    "@repo/types": "workspace:*",
     "@tanstack/react-router": "^1.67.0",
     "@trpc/client": "11.0.0-rc.553",
     "class-variance-authority": "^0.7.0",
