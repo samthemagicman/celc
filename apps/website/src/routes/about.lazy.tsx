@@ -6,7 +6,7 @@ export const Route = createLazyFileRoute("/about")({
   component: About,
 });
 
-function About() {
+function About() { //component 
   return (
     <div className="p-2">
       <Button
