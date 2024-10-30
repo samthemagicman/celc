@@ -17,6 +17,9 @@ importers:
       '@repo/trpc':
         specifier: workspace:*
         version: link:../../packages/trpc
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@tanstack/react-router':
         specifier: ^1.67.0
         version: 1.67.0(@tanstack/router-generator@1.65.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

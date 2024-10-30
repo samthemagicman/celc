@@ -8,4 +8,5 @@ export const event = sqliteTable("event", {
   startHour: real().notNull(),
   endHour: real().notNull(),
   day: int().notNull(),
+  backgroundColor: text(),
 });
