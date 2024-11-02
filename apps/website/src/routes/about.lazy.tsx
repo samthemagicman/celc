@@ -17,6 +17,7 @@ function About() {
   const[startTime, setStartTime] = useState("7:30 A.M.")
   const[endTime, setEndTime] = useState("8:30 A.M.")
   const[location, setLocation] = useState('')
+  const[backgroundColor, setBackgroundColor] = useState('ff4e13')
   
   //Availble Day Options
   const dayOptions = [
@@ -44,6 +45,13 @@ function About() {
     "10:30 P.M.", "10:45 P.M.", "11:00 P.M.", "11:15 P.M.", "11:30 P.M.", "11:45 P.M.",
     "12:00 A.M."
   ];
+  //Available Colors
+  //Include Names of the colors
+  //And do bckground text thing
+  const colorOptions = [
+    'FF4E13', 'FF9A31', 'FFDE59', '0047A3', '74B3FB', 'C3326C', '222222', 'EDEDED'
+  ];
+
 
   const calculateRealTime = (time: string) => {
     const [hourMin, period] = time.split(' ') //split hour and am/pm, tokenization
@@ -95,11 +103,6 @@ function About() {
     }
   }
 
-  //for this we need to acquire the id from selection of the event
-  // to remove it
-  //this will be used by admin and users
-  //admin access deletes the event from db
-  //for user - its just hide the event
   // Function to delete a specific event with error handling
   const deleteEvent = async (eventId: string) => {
     try {
@@ -199,7 +202,7 @@ function About() {
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
                     required
-                    className="p-2 border border-gray-300 rounded w-full"
+                    className='p-2 border border-gray-300 rounded w-full'
                   >
                     {timeOptions.map((time) => (
                       <option key={time} value={time}>{time}</option>
@@ -213,7 +216,7 @@ function About() {
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
                     required
-                    className="p-2 border border-gray-300 rounded w-full"
+                    className='p-2 border border-gray-300 rounded w-full'
                   >
                     {timeOptions.map((time) => (
                       <option key={time} value={time}>{time}</option>
@@ -229,8 +232,33 @@ function About() {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   required
-                  className="p-2 border border-gray-300 rounded w-full"
+                  className='p-2 border border-gray-300 rounded w-full'
                 />
+              </label>
+
+              <label>
+                Background Color:
+                <select
+                  value={backgroundColor}
+                  onChange={(e) => setBackgroundColor(e.target.value)}
+                  required
+                  className='p-2 border border-gray-300 rounded w-full'
+                >
+                  {colorOptions.map((color) => (
+                    <option
+                      key={color}
+                      value={color}
+                      style={{ 
+                        backgroundColor: `#${color}`,
+                        color:`#${color}`, // makes text blend into bckground
+                        textShadow: `0 0 0 transparent`, //hides the hex text
+                      }}
+                    >
+                      {color}
+                      {/* I want the default to show the color here for color picker, and not show text {color}  */}
+                    </option>
+                  ))}
+                </select>
               </label>
 
               <div className="modal-actions flex justify-between">
