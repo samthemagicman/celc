@@ -17,7 +17,7 @@ const UpdateEventInput = z.object({
   startHour: z.number().optional(),
   endHour: z.number().optional(),
   location: z.string().optional(),
-  containerColor: z.string().optional(),
+  backgroundColor: z.string().optional(),
   //this is for custom color
 });
 

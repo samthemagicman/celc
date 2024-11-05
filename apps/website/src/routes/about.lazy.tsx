@@ -17,8 +17,8 @@ function About() {
   const[startTime, setStartTime] = useState("7:30 A.M.")
   const[endTime, setEndTime] = useState("8:30 A.M.")
   const[location, setLocation] = useState('')
-  const[backgroundColor, setBackgroundColor] = useState('ff4e13')
-  
+  const [backgroundColor, setBackgroundColor] = useState('#FF4E13'); // Default color
+  //#FF4E13
   //Availble Day Options
   const dayOptions = [
     { day: 0, label: "Day 0 - Wednesday" },
@@ -49,7 +49,7 @@ function About() {
   //Include Names of the colors
   //And do bckground text thing
   const colorOptions = [
-    'FF4E13', 'FF9A31', 'FFDE59', '0047A3', '74B3FB', 'C3326C', '222222', 'EDEDED'
+    '#FF4E13', '#FF9A31', '#FFDE59', '#0047A3', '#74B3FB', '#C3326C', '#222222', '#EDEDED'
   ];
 
 
@@ -90,6 +90,7 @@ function About() {
         title: title,
         description: description,
         location: location,
+        backgroundColor: backgroundColor,
       })
       console.log('Event created:', data)
       
@@ -235,31 +236,26 @@ function About() {
                   className='p-2 border border-gray-300 rounded w-full'
                 />
               </label>
-
               <label>
                 Background Color:
-                <select
-                  value={backgroundColor}
-                  onChange={(e) => setBackgroundColor(e.target.value)}
-                  required
-                  className='p-2 border border-gray-300 rounded w-full'
-                >
+                <div className="flex space-x-2 mt-2">
                   {colorOptions.map((color) => (
-                    <option
+                    <div
                       key={color}
-                      value={color}
-                      style={{ 
-                        backgroundColor: `#${color}`,
-                        color:`#${color}`, // makes text blend into bckground
-                        textShadow: `0 0 0 transparent`, //hides the hex text
+                      onClick={() => setBackgroundColor(color)}
+                      style={{
+                        backgroundColor: color,
+                        flex: '1 1 0%', // Adjusts the width of each square to be flexible
+                        paddingTop: '10%', // Makes the div a square by setting height proportional to width
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        border: backgroundColor === color ? '2px solid black' : '2px solid white',
                       }}
-                    >
-                      {color}
-                      {/* I want the default to show the color here for color picker, and not show text {color}  */}
-                    </option>
+                    />
                   ))}
-                </select>
+                </div>
               </label>
+
 
               <div className="modal-actions flex justify-between">
                 <button type="submit" className="flex items-center">
