@@ -3,6 +3,7 @@ import { CalendarCheck, CalendarX } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { trpc } from "~/lib/api";
+import { cn } from "~/lib/utils";
 
 export const Route = createLazyFileRoute("/about")({
   component: About,
@@ -195,104 +196,100 @@ function About() {
                 createEvent();
               }}
             >
-              <label>
-                Title:
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                  className="p-2 border border-gray-300 rounded w-full"
-                />
-              </label>
+              <label htmlFor="title">Title:</label>
+              <input
+                name="title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                className="p-2 border border-gray-300 rounded w-full"
+              />
 
-              <label>
-                Description:
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  required
-                  className="p-2 border border-gray-300 rounded w-full max-h-52"
-                />
-              </label>
+              <label htmlFor="description">Description:</label>
+              <textarea
+                name="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                className="p-2 border border-gray-300 rounded w-full max-h-52"
+              />
 
-              <label>
-                Select Event Day:
+              <label htmlFor="day">Select Event Day:</label>
+              <select
+                name="day"
+                value={day}
+                onChange={(e) => setDay(parseInt(e.target.value))}
+                required
+                className="p-2 border border-gray-300 rounded w-full"
+              >
+                {dayOptions.map(({ day, label }) => (
+                  <option key={day} value={day}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+
+              <div className="flex justify-between mb-4">
+                <label className="flex-1 mr-2" htmlFor="startTime">
+                  Start Time:
+                </label>
                 <select
-                  value={day}
-                  onChange={(e) => setDay(parseInt(e.target.value))}
+                  name="startTime"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
                   required
                   className="p-2 border border-gray-300 rounded w-full"
                 >
-                  {dayOptions.map(({ day, label }) => (
-                    <option key={day} value={day}>
-                      {label}
+                  {timeOptions.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
                     </option>
                   ))}
                 </select>
-              </label>
 
-              <div className="flex justify-between mb-4">
-                <label className="flex-1 mr-2">
-                  Start Time:
-                  <select
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    required
-                    className="p-2 border border-gray-300 rounded w-full"
-                  >
-                    {timeOptions.map((time) => (
-                      <option key={time} value={time}>
-                        {time}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="flex-1 ml-2">
+                <label className="flex-1 ml-2" htmlFor="endTime">
                   End Time:
-                  <select
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    required
-                    className="p-2 border border-gray-300 rounded w-full"
-                  >
-                    {timeOptions.map((time) => (
-                      <option key={time} value={time}>
-                        {time}
-                      </option>
-                    ))}
-                  </select>
                 </label>
-              </div>
-
-              <label>
-                Location:
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                <select
+                  name="endTime"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
                   required
                   className="p-2 border border-gray-300 rounded w-full"
-                />
-              </label>
+                >
+                  {timeOptions.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <label htmlFor="location">Location:</label>
+              <input
+                name="location"
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                required
+                className="p-2 border border-gray-300 rounded w-full"
+              />
               <label>
                 Background Color:
-                <div className="flex space-x-2 mt-2">
+                <div className="flex space-x-2 mt-2 items-stretch">
                   {colorOptions.map((color) => (
-                    <div
+                    <button
                       key={color}
                       onClick={() => setBackgroundColor(color)}
+                      className={cn(
+                        `cursor-pointer flex-1 rounded-md h-8`,
+                        backgroundColor === color
+                          ? "border-2 border-black"
+                          : "border-2 border-white",
+                      )}
                       style={{
                         backgroundColor: color,
-                        flex: "1 1 0%", // Adjusts the width of each square to be flexible
-                        paddingTop: "10%", // Makes the div a square by setting height proportional to width
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        border:
-                          backgroundColor === color
-                            ? "2px solid black"
-                            : "2px solid white",
                       }}
                     />
                   ))}
