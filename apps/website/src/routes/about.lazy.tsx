@@ -23,13 +23,13 @@ function About() {
   //#FF4E13
   //Availble Day Options
   const dayOptions = [
-    { day: 0, label: "Day 0 - Wednesday" },
-    { day: 1, label: "Day 1 - Thursday" },
-    { day: 2, label: "Day 2 - Friday" },
-    { day: 3, label: "Day 3 - Saturday" },
-    { day: 4, label: "Day 4 - Sunday" },
-    { day: 5, label: "Day 5 - Monday" },
-    { day: 6, label: "Day 6 - Tuesday" },
+    { day: 0, label: "Day 1 - Wednesday" },
+    { day: 1, label: "Day 2 - Thursday" },
+    { day: 2, label: "Day 3 - Friday" },
+    { day: 3, label: "Day 4 - Saturday" },
+    { day: 4, label: "Day 5 - Sunday" },
+    { day: 5, label: "Day 6 - Monday" },
+    { day: 6, label: "Day 7 - Tuesday" },
   ];
 
   //Available Time Options
@@ -185,96 +185,107 @@ function About() {
 
       {/* Pop-Up Structure */}
       {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>
-              <strong>Create Event</strong>
-            </h2>
+        <div className="fixed flex top-0 left-0 right-0 bottom-0 bg-black/50 justify-center items-center z-[1000]">
+          <div className="m-3 p-5 rounded-md shadow-md max-w-screen-md bg-white">
+            <h2 className="mb-4 text-xl font-bold">Create Event</h2>
             <form
+              className="flex flex-col gap-3"
               onSubmit={(e) => {
                 e.preventDefault();
                 createEvent();
               }}
             >
-              <label htmlFor="title">Title:</label>
-              <input
-                name="title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="p-2 border border-gray-300 rounded w-full"
-              />
+              <div>
+                <label htmlFor="title">Title:</label>
+                <input
+                  name="title"
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  className="p-2 border border-gray-300 rounded w-full"
+                />
+              </div>
 
-              <label htmlFor="description">Description:</label>
-              <textarea
-                name="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                className="p-2 border border-gray-300 rounded w-full max-h-52"
-              />
+              <div>
+                <label htmlFor="description">Description:</label>
+                <textarea
+                  name="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                  className="p-2 border border-gray-300 rounded w-full max-h-52"
+                />
+              </div>
 
-              <label htmlFor="day">Select Event Day:</label>
-              <select
-                name="day"
-                value={day}
-                onChange={(e) => setDay(parseInt(e.target.value))}
-                required
-                className="p-2 border border-gray-300 rounded w-full"
-              >
-                {dayOptions.map(({ day, label }) => (
-                  <option key={day} value={day}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-
-              <div className="flex justify-between mb-4">
-                <label className="flex-1 mr-2" htmlFor="startTime">
-                  Start Time:
-                </label>
+              <div>
+                <label htmlFor="day">Select Event Day:</label>
                 <select
-                  name="startTime"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
+                  name="day"
+                  value={day}
+                  onChange={(e) => setDay(parseInt(e.target.value))}
                   required
                   className="p-2 border border-gray-300 rounded w-full"
                 >
-                  {timeOptions.map((time) => (
-                    <option key={time} value={time}>
-                      {time}
-                    </option>
-                  ))}
-                </select>
-
-                <label className="flex-1 ml-2" htmlFor="endTime">
-                  End Time:
-                </label>
-                <select
-                  name="endTime"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  required
-                  className="p-2 border border-gray-300 rounded w-full"
-                >
-                  {timeOptions.map((time) => (
-                    <option key={time} value={time}>
-                      {time}
+                  {dayOptions.map(({ day, label }) => (
+                    <option key={day} value={day}>
+                      {label}
                     </option>
                   ))}
                 </select>
               </div>
 
-              <label htmlFor="location">Location:</label>
-              <input
-                name="location"
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                required
-                className="p-2 border border-gray-300 rounded w-full"
-              />
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="flex-1 mr-2" htmlFor="startTime">
+                    Start Time:
+                  </label>
+                  <select
+                    name="startTime"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    required
+                    className="p-2 border border-gray-300 rounded w-full"
+                  >
+                    {timeOptions.map((time) => (
+                      <option key={time} value={time}>
+                        {time}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex-1">
+                  <label className="flex-1 ml-2" htmlFor="endTime">
+                    End Time:
+                  </label>
+                  <select
+                    name="endTime"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    required
+                    className="p-2 border border-gray-300 rounded w-full"
+                  >
+                    {timeOptions.map((time) => (
+                      <option key={time} value={time}>
+                        {time}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="location">Location:</label>
+                <input
+                  name="location"
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  required
+                  className="p-2 border border-gray-300 rounded w-full"
+                />
+              </div>
               <label>
                 Background Color:
                 <div className="flex space-x-2 mt-2 items-stretch">
@@ -296,7 +307,7 @@ function About() {
                 </div>
               </label>
 
-              <div className="modal-actions flex justify-between items-stretch pt-3 gap-3">
+              <div className="modal-actions flex justify-between items-stretch gap-3">
                 <Button type="submit" className="flex gap-3 w-full">
                   <CalendarCheck />
                   Submit
