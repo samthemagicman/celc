@@ -1,19 +1,28 @@
 import { db } from "@repo/database";
 import { appRouter, createContext } from "@repo/trpc";
-import { createHTTPServer } from "@trpc/server/adapters/standalone";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import express from "express";
 
-const server = createHTTPServer({
-  router: appRouter,
-  createContext: async (opt) => {
-    return createContext(
-      {
-        db,
-      },
-      opt,
-    );
-  },
-});
+const app = express();
 
-server.listen(3000, () => {
-  console.log("Listening on http://localhost:3000");
-});
+app.use(
+  "/trpc",
+  trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext: (opts) => {
+      return createContext(
+        {
+          db,
+        },
+        opts,
+      );
+    },
+    onError: (opts) => {
+      console.error(opts.error, "tRPC error on API");
+    },
+  }),
+);
+
+app.use(express.json());
+
+app.listen(process.env.API_PORT ?? 3000);

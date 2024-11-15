@@ -3,9 +3,6 @@
   "compilerOptions": {
     "outDir": "build",
     "target": "ES2022",
-    "paths": {
-      "~/*": ["./src/*"]
-    },
     "module": "es2022",
     "moduleResolution": "Bundler",
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
