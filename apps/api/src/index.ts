@@ -25,24 +25,4 @@ app.use(
 
 app.use(express.json());
 
-// app.get("/auth/callback", async (req, res) => {
-//   res.send("callback");
-// })
-
 app.listen(process.env.API_PORT ?? 3000);
-
-// const server = createHTTPServer({
-//   router: appRouter,
-//   createContext: async (opt) => {
-//     return createContext(
-//       {
-//         db,
-//       },
-//       opt,
-//     );
-//   },
-// });
-
-// server.listen(3000, () => {
-//   console.log("Listening on http://localhost:3000");
-// });
