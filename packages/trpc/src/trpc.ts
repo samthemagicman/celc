@@ -1,6 +1,7 @@
 import { db } from "@repo/database";
 import { initTRPC } from "@trpc/server";
 import { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
+import { validateJwtFromReq } from "./lib/auth";
 
 type CreateContextOptions = {
   db: typeof db;
@@ -40,4 +41,25 @@ export const adminProcedure = publicProcedure.use(async (opts) => {
   }
 
   return opts.next();
+});
+// Authenticated procedure
+export const authProcedure = publicProcedure.use(async (opts) => {
+  if (!opts.ctx.req) {
+    throw new Error("No request");
+  }
+  if (!opts.ctx.res) {
+    throw new Error("No response");
+  }
+
+  const userInfo = await validateJwtFromReq(opts.ctx.req, opts.ctx.res);
+
+  if (!userInfo) {
+    throw new Error("Unauthorized");
+  }
+
+  return opts.next({
+    ctx: {
+      userInfo,
+    },
+  });
 });
