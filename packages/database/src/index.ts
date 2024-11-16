@@ -9,5 +9,6 @@ if (!process.env.DB_LOCATION) {
 
 const client = createClient({ url: process.env.DB_LOCATION });
 const db = drizzle(client);
+
 export * from "drizzle-orm";
 export { client, db, schema };
