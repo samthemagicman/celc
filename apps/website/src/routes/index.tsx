@@ -1,5 +1,6 @@
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import React from "react";
+import { numberToTime } from "~/components/calendar";
 import { FullCalendar } from "~/components/full-calendar";
 import { Button } from "~/components/ui/button";
 import {
@@ -8,6 +9,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  ModalTitle,
 } from "~/components/ui/modal";
 import { trpc } from "~/lib/api";
 
@@ -36,7 +38,16 @@ function Index() {
         }}
       >
         <ModalContent>
-          <ModalHeader>{clickedEvent?.title}</ModalHeader>
+          <ModalHeader>
+            <ModalTitle>{clickedEvent?.title}</ModalTitle>
+            <div className="text-sm">
+              <p>
+                {numberToTime(clickedEvent?.startHour || 0, true)} -{" "}
+                {numberToTime(clickedEvent?.endHour || 0, true)}
+              </p>
+              <p>{clickedEvent?.location}</p>
+            </div>
+          </ModalHeader>
           <ModalBody>
             <p>{clickedEvent?.description}</p>
           </ModalBody>

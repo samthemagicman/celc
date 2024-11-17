@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
-import React, { useMemo } from "react";
+import React, { HTMLProps, useMemo } from "react";
 import { createPortal } from "react-dom";
+import { cn } from "~/lib/utils";
 
 // Modal context
 const ModalContext = React.createContext<{
@@ -72,8 +73,17 @@ const ModalContent: React.FC<React.PropsWithChildren> = ({ children }) => {
   );
 };
 
-const ModalHeader: React.FC<React.PropsWithChildren> = ({ children }) => {
-  return <p className="text-xl font-semibold tracking-wide">{children}</p>;
+const ModalHeader: React.FC<HTMLProps<HTMLDivElement>> = (props) => {
+  return <div className={cn("mb-2", props.className)} {...props} />;
+};
+
+const ModalTitle: React.FC<HTMLProps<HTMLParagraphElement>> = (props) => {
+  return (
+    <p
+      className={cn("text-xl font-semibold tracking-wide", props.className)}
+      {...props}
+    />
+  );
 };
 
 const ModalBody: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -84,4 +94,4 @@ const ModalFooter: React.FC<React.PropsWithChildren> = ({ children }) => {
   return <div className="mt-4">{children}</div>;
 };
 
-export { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader };
+export { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalTitle };
