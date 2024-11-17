@@ -134,6 +134,7 @@ type CalendarProps = {
   children?: React.ReactNode;
   events?: DatabaseEvent[];
   renderTimes?: boolean;
+  onEventClick?: (event: DatabaseEvent) => void;
 };
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -142,6 +143,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   endHour,
   events,
   renderTimes = true,
+  onEventClick,
 }) => {
   const rows = Array.from({ length: endHour - startHour + 1 });
 
@@ -219,6 +221,9 @@ export const Calendar: React.FC<CalendarProps> = ({
                         title={event.title}
                         startHour={event.startHour}
                         endHour={event.endHour}
+                        onClick={() => {
+                          onEventClick?.(event);
+                        }}
                       />
                     );
                   })}
@@ -248,6 +253,7 @@ const CalendarEvent: React.FC<{
   location?: string;
   backgroundColor?: string;
   title: string;
+  onClick?: () => void;
 }> = ({
   startHour,
   endHour,
@@ -257,6 +263,7 @@ const CalendarEvent: React.FC<{
   width,
   horizontalOffset,
   backgroundColor,
+  onClick,
 }) => {
   const calendar = React.useContext(CalendarContext);
   const calendarRow = React.useContext(EventColumnContainerContext);
@@ -265,17 +272,17 @@ const CalendarEvent: React.FC<{
     : startHour - (calendar?.startHour ?? 0);
   const hourLength = endHour - startHour;
 
-  const contentDiv = useRef<HTMLDivElement>(null);
+  const contentBtn = useRef<HTMLButtonElement>(null);
   const [divHeight, setDivHeight] = React.useState<number | null>(null);
 
   useEffect(() => {
-    if (contentDiv.current) {
-      setDivHeight(contentDiv.current.clientHeight);
+    if (contentBtn.current) {
+      setDivHeight(contentBtn.current.clientHeight);
     }
-  }, [contentDiv]);
+  }, [contentBtn]);
 
   return (
-    <div
+    <button
       className={cn(
         "w-full z-30 select-none cursor-pointer p-px active:opacity-90 duration-100 transition-all",
         !calendarRow && "absolute",
@@ -288,7 +295,8 @@ const CalendarEvent: React.FC<{
         marginTop: calendarRow ? `calc(${rowHeight}*${row})` : undefined, // Margins + offset by 2 hours
         height: `calc(${rowHeight} * ${hourLength})`, // 8 hours and 50 minutes
       }}
-      ref={contentDiv}
+      ref={contentBtn}
+      onClick={onClick}
     >
       <div
         className={cn(
@@ -329,6 +337,6 @@ const CalendarEvent: React.FC<{
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 };
