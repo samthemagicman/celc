@@ -10,3 +10,12 @@ export const event = sqliteTable("event", {
   day: int().notNull(),
   backgroundColor: text(),
 });
+
+export const users = sqliteTable("users", {
+  id: text().primaryKey(),
+  username: text().notNull(),
+  email: text().notNull(),
+  role: text({
+    enum: ["admin", "user"],
+  }).notNull(),
+});
