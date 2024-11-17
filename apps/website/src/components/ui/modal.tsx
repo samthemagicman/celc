@@ -113,7 +113,7 @@ const ModalContent: React.FC<React.PropsWithChildren> = ({ children }) => {
 };
 
 const ModalHeader: React.FC<HTMLProps<HTMLDivElement>> = (props) => {
-  return <div className={cn("mb-2", props.className)} {...props} />;
+  return <div className={cn("mb-2 mr-6", props.className)} {...props} />;
 };
 
 const ModalTitle: React.FC<HTMLProps<HTMLParagraphElement>> = (props) => {
