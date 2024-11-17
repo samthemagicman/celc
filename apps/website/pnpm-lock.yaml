@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  rollup: npm:@rollup/wasm-node
-
 importers:
 
   .:
@@ -23,9 +20,6 @@ importers:
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@rollup/rollup-linux-arm64-gnu':
-        specifier: ^4.27.2
-        version: 4.27.2
       '@tanstack/react-router':
         specifier: ^1.67.0
         version: 1.67.0(@tanstack/router-generator@1.65.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -62,15 +56,11 @@ importers:
       zustand:
         specifier: ^5.0.1
         version: 5.0.1(@types/react@18.3.11)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1))
-    optionalDependencies:
-      '@rollup/rollup-linux-x64-musl':
-        specifier: 4.9.5
-        version: 4.9.5
     devDependencies:
       '@eslint/js':
         specifier: ^9.11.1
         version: 9.11.1
-      '@rollup/rollup-linux-x64-gnu':
+      '@rollup/rollup-linux-arm64-gnu':
         specifier: ^4.27.2
         version: 4.27.2
       '@tanstack/router-cli':
@@ -637,16 +627,6 @@ packages:
 
   '@rollup/rollup-linux-arm64-gnu@4.27.2':
     resolution: {integrity: sha512-uCFX9gtZJoQl2xDTpRdseYuNqyKkuMDtH6zSrBTA28yTfKyjN9hQ2B04N5ynR8ILCoSDOrG/Eg+J2TtJ1e/CSA==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@rollup/rollup-linux-x64-gnu@4.27.2':
-    resolution: {integrity: sha512-PaW2DY5Tan+IFvNJGHDmUrORadbe/Ceh8tQxi8cmdQVCCYsLoQo2cuaSj+AU+YRX8M4ivS2vJ9UGaxfuNN7gmg==}
-    os: [linux]
-
-  '@rollup/rollup-linux-x64-musl@4.9.5':
-    resolution: {integrity: sha512-ezyFUOwldYpj7AbkwyW9AJ203peub81CaAIVvckdkyH8EvhEIoKzaMFJj0G4qYJ5sw3BpqhFrsCc30t54HV8vg==}
-    cpu: [x64]
     os: [linux]
 
   '@rollup/wasm-node@4.27.2':
@@ -2206,11 +2186,6 @@ snapshots:
       '@types/react': 18.3.11
 
   '@rollup/rollup-linux-arm64-gnu@4.27.2': {}
-
-  '@rollup/rollup-linux-x64-gnu@4.27.2': {}
-
-  '@rollup/rollup-linux-x64-musl@4.9.5':
-    optional: true
 
   '@rollup/wasm-node@4.27.2':
     dependencies:
