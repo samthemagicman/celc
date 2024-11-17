@@ -60,7 +60,7 @@ const ModalContainer: React.FC<{
 const ModalContent: React.FC<React.PropsWithChildren> = ({ children }) => {
   const modal = React.useContext(ModalContext);
   return (
-    <div className="bg-white rounded-md shadow-md p-4 pointer-events-auto min-w-60 max-w-screen-sm relative">
+    <div className="bg-white rounded-md shadow-md m-2 p-4 pointer-events-auto min-w-60 max-w-screen-sm relative">
       <X
         onClick={() => {
           modal.onRequestClose?.();
