@@ -1,0 +1,31 @@
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./apps/api/dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./db.sqlite:/app/db.sqlite
+    env_file: .env
+    ports:
+      - "3001:3000"
+    expose:
+      - 3000
+    environment:
+      - NODE_ENV=production
+      - API_PORT=3000
+      - DB_LOCATION=file:/app/db.sqlite # Example environment variable
+  website:
+    depends_on:
+      - api
+    build:
+      context: .
+      dockerfile: dockerfile.nginx
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "3333:80" # Map port 80 in the container to port 3333 on the host
+    restart: unless-stopped

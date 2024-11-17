@@ -5,6 +5,10 @@ import express from "express";
 
 const app = express();
 
+app.get("/", (req, res) => {
+  res.send("ok");
+});
+
 app.use(
   "/trpc",
   trpcExpress.createExpressMiddleware({
@@ -24,5 +28,7 @@ app.use(
 );
 
 app.use(express.json());
+const port = process.env.API_PORT ?? 3000;
+app.listen(port);
 
-app.listen(process.env.API_PORT ?? 3000);
+console.log(`API listening on port ${port}`);
