@@ -3,9 +3,6 @@ import { cn } from "~/lib/utils";
 import useWindowDimensions from "~/lib/window-dimensions";
 import { Calendar, CalendarCurrentTimeIndicator } from "./calendar";
 import { DraggableDiv } from "./draggable-div";
-type FullCalendarProps = {
-  events: ComponentProps<typeof Calendar>["events"];
-};
 
 const days = [
   "Monday",
@@ -18,8 +15,16 @@ const days = [
 ] as const;
 const dayDateStart = 1;
 
+type FullCalendarProps = {
+  events: ComponentProps<typeof Calendar>["events"];
+  onEventClick?: ComponentProps<typeof Calendar>["onEventClick"];
+};
+
 // Displays the full calendar including day selection
-export const FullCalendar: React.FC<FullCalendarProps> = ({ events }) => {
+export const FullCalendar: React.FC<FullCalendarProps> = ({
+  events,
+  onEventClick,
+}) => {
   const { width } = useWindowDimensions();
   const [selectedDay, setSelectedDay] = React.useState(0);
 
@@ -53,7 +58,12 @@ export const FullCalendar: React.FC<FullCalendarProps> = ({ events }) => {
   if (width < 1024) {
     mainContent = (
       <div className="px-2">
-        <Calendar startHour={7} endHour={24} events={eventsOnDay}>
+        <Calendar
+          startHour={7}
+          endHour={24}
+          events={eventsOnDay}
+          onEventClick={onEventClick}
+        >
           <CalendarCurrentTimeIndicator />
         </Calendar>
       </div>
@@ -70,6 +80,7 @@ export const FullCalendar: React.FC<FullCalendarProps> = ({ events }) => {
             >
               <p className="text-center font-bold">{days[i]}</p>
               <Calendar
+                onEventClick={onEventClick}
                 renderTimes={i === 0}
                 startHour={7}
                 endHour={24}
