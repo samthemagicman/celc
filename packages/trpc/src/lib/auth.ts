@@ -40,7 +40,7 @@ const discordOauthConfig = new oidclient.Configuration(
 const signingKey = process.env.AUTH_SIGNING_KEY;
 
 export const discordAuth = {
-  logout: async (req: IncomingMessage, res: ServerResponse) => {
+  logout: async (_req: IncomingMessage, res: ServerResponse) => {
     // Discord doesn't provide token revocation, so we would have to create a custom solution. For now, we just delete the cookies.
 
     deleteCookie(res, CookieNames.AccessToken);
