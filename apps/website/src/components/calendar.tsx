@@ -85,7 +85,7 @@ const numberToTime = (n: number, showMinutes: boolean = false) => {
   }
 };
 
-const CurrentTimeIndicator = () => {
+export const CalendarCurrentTimeIndicator = () => {
   const calendar = useCalendar();
   const [now, setNow] = React.useState(new Date());
   const currentHour = useMemo(
@@ -133,6 +133,7 @@ type CalendarProps = {
   endHour: number;
   children?: React.ReactNode;
   events?: DatabaseEvent[];
+  renderTimes?: boolean;
 };
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -140,6 +141,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   startHour,
   endHour,
   events,
+  renderTimes = true,
 }) => {
   const rows = Array.from({ length: endHour - startHour + 1 });
 
@@ -158,18 +160,22 @@ export const Calendar: React.FC<CalendarProps> = ({
       )}
     >
       <div className="flex flex-row relative">
-        <div className="flex flex-col items-center px-1">
-          {rows.map((_, i) => (
-            <div
-              key={i}
-              style={{
-                height: rowHeight,
-              }}
-            >
-              <p className="text-xs text-end">{numberToTime(i + startHour)}</p>
-            </div>
-          ))}
-        </div>
+        {renderTimes && (
+          <div className="flex flex-col items-center px-1">
+            {rows.map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  height: rowHeight,
+                }}
+              >
+                <p className="text-xs text-end">
+                  {numberToTime(i + startHour)}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
         <div className="flex-1 self-stretch relative">
           {rows.map((_, i) => (
             <div
@@ -220,7 +226,6 @@ export const Calendar: React.FC<CalendarProps> = ({
               ))}
             </>
           ))}
-          <CurrentTimeIndicator />
           {children}
         </div>
       </div>

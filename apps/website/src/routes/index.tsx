@@ -1,22 +1,24 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Calendar } from "~/components/calendar";
+import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { FullCalendar } from "~/components/full-calendar";
 import { trpc } from "~/lib/api";
-
-let events: Awaited<ReturnType<typeof trpc.event.getAllEvents.query>> = [];
 
 export const Route = createFileRoute("/")({
   component: Index,
   loader: async () => {
-    events = await trpc.event.getAllEvents.query();
-
-    return { events };
+    return { events: await trpc.event.getAllEvents.query() };
   },
+  gcTime: 0,
+  shouldReload: false,
 });
 
 function Index() {
+  const { events } = useLoaderData({
+    from: "/",
+  });
   return (
-    <div className="p-2">
-      <Calendar startHour={7} endHour={24} events={events} />
+    <div>
+      <h1 className="text-xl font-bold my-4 text-center">Event Calendar</h1>
+      <FullCalendar events={events} />
     </div>
   );
 }
