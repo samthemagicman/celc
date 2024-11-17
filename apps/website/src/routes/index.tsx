@@ -65,10 +65,9 @@ function Index() {
       <h1 className="text-xl font-bold my-4 text-center">Event Calendar</h1>
       <FullCalendar
         events={events}
-
-        // onEventClick={(event) => {
-        //   setClickedEvent(event);
-        // }}
+        onEventClick={(event) => {
+          setClickedEvent(event);
+        }}
       />
     </div>
   );
