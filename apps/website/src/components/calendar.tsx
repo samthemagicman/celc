@@ -1,8 +1,7 @@
 import { ClockIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
 import { DatabaseEvent } from "@repo/types/database";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { cn } from "~/lib/utils";
-
 
 const rowHeight = "8em";
 
@@ -129,8 +128,6 @@ const useCalendar = () => {
   return context;
 };
 
-
-
 type CalendarProps = {
   startHour: number;
   endHour: number;
@@ -145,20 +142,12 @@ export const Calendar: React.FC<CalendarProps> = ({
   events,
 }) => {
   const rows = Array.from({ length: endHour - startHour + 1 });
-  const [selectedEvent, setSelectedEvent] = React.useState<DatabaseEvent | null>(
-    null,
-  );
 
   const organizedEvents = useMemo(() => {
     return events ? [organizeEvents(events)] : [];
   }, [events]);
 
-  const handleEventClick = (event: DatabaseEvent) => {
-    setSelectedEvent(event); // Set the clicked event
-  };
-
   return (
-    
     <CalendarContext.Provider
       value={useMemo(
         () => ({
@@ -172,10 +161,10 @@ export const Calendar: React.FC<CalendarProps> = ({
         <div className="flex flex-col items-center px-1">
           {rows.map((_, i) => (
             <div
-            key={i}
-            style={{
-              height: rowHeight,
-            }}
+              key={i}
+              style={{
+                height: rowHeight,
+              }}
             >
               <p className="text-xs text-end">{numberToTime(i + startHour)}</p>
             </div>
@@ -184,32 +173,13 @@ export const Calendar: React.FC<CalendarProps> = ({
         <div className="flex-1 self-stretch relative">
           {rows.map((_, i) => (
             <div
-            key={i}
-            className="w-full bg-primary/10 rounded-full absolute z-10 h-px"
-            style={{
-              top: `calc(${rowHeight} * ${i} + 0.5em)`,
-            }}
+              key={i}
+              className="w-full bg-primary/10 rounded-full absolute z-10 h-px"
+              style={{
+                top: `calc(${rowHeight} * ${i} + 0.5em)`,
+              }}
             ></div>
-            ))}
-                {selectedEvent && (
-                  <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black/50">
-                    <div className="bg-white rounded p-4 shadow">
-                      <h2 className="text-lg font-bold">{selectedEvent.title}</h2>
-                      <p>{`Description: ${selectedEvent.description || "Unknown"}`}</p>
-                      <p>{`Location: ${selectedEvent.location || "Unknown"}`}</p>
-                      <p>{`Time: ${numberToTime(
-                        selectedEvent.startHour,
-                        true,
-                      )} - ${numberToTime(selectedEvent.endHour, true)}`}</p>
-                      <button
-                        onClick={() => setSelectedEvent(null)}
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                      >
-                        Close
-                      </button>
-                    </div>
-                  </div>
-                )}
+          ))}
           {organizedEvents?.map((eventGroup) => (
             <>
               {eventGroup.map((eventColumn, x) => (
@@ -243,7 +213,6 @@ export const Calendar: React.FC<CalendarProps> = ({
                         title={event.title}
                         startHour={event.startHour}
                         endHour={event.endHour}
-                        onClick={() => handleEventClick(event)} //pass the handler
                       />
                     );
                   })}
@@ -251,8 +220,6 @@ export const Calendar: React.FC<CalendarProps> = ({
               ))}
             </>
           ))}
-            {/*This is where is selected event is at  */}
-            
           <CurrentTimeIndicator />
           {children}
         </div>
@@ -276,7 +243,6 @@ const CalendarEvent: React.FC<{
   location?: string;
   backgroundColor?: string;
   title: string;
-  onClick?: ()=> void; //property type handling clicks
 }> = ({
   startHour,
   endHour,
@@ -286,7 +252,6 @@ const CalendarEvent: React.FC<{
   width,
   horizontalOffset,
   backgroundColor,
-  onClick,
 }) => {
   const calendar = React.useContext(CalendarContext);
   const calendarRow = React.useContext(EventColumnContainerContext);
@@ -318,7 +283,6 @@ const CalendarEvent: React.FC<{
         marginTop: calendarRow ? `calc(${rowHeight}*${row})` : undefined, // Margins + offset by 2 hours
         height: `calc(${rowHeight} * ${hourLength})`, // 8 hours and 50 minutes
       }}
-      onClick={onClick}
       ref={contentDiv}
     >
       <div
