@@ -294,19 +294,17 @@ const CalendarEvent: React.FC<{
         }}
       >
         <div className="px-2 py-1 flex flex-col">
-          <div className="">
-            <div
-              className={cn(
-                "text-white tracking-wider text-xs xs:text-sm sm:text-base font-semibold text-ellipsis break-all line-clamp-1",
-              )}
-            >
-              {title}
-            </div>
+          <div
+            className={cn(
+              "text-white text-start tracking-wider text-xs xs:text-sm sm:text-base font-semibold text-ellipsis break-all line-clamp-1",
+            )}
+          >
+            {title}
           </div>
           {/* Hide if height is too small */}
           <div
             className={cn(
-              "flex flex-col gap-1",
+              "flex flex-col gap-1 text-start",
               divHeight && divHeight < 40 && "hidden",
             )}
           >
