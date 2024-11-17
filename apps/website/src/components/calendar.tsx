@@ -54,7 +54,7 @@ const organizeEvents = (events: EventColumn) => {
   return groupedEvents;
 };
 
-const numberToTime = (n: number, showMinutes: boolean = false) => {
+export const numberToTime = (n: number, showMinutes: boolean = false) => {
   const hour = Math.floor(n);
   const minutes = Math.round((n - hour) * 60);
 
