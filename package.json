@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No test specified\" && exit 0",
     "dev": "pnpm run with-env pnpm run --filter api --filter website dev",
     "website": "pnpm run --filter website dev",
     "with-env": "dotenv -e ./.env --",
     "api": "pnpm run with-env pnpm run --filter api dev",
     "lint": "eslint .",
+    "build": "pnpm run -r build",
     "format": "prettier --write .",
     "db:push": "pnpm run with-env pnpm run --filter database db:push",
     "db:studio": "pnpm run with-env pnpm run --filter database db:studio"

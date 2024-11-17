@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "pnpm run generate-routes && tsc -b && vite build",
+    "generate-routes": "tsr generate",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
+    "@tanstack/router-cli": "^1.81.9",
     "@tanstack/router-devtools": "^1.67.0",
     "@tanstack/router-plugin": "^1.66.1",
     "@types/js-cookie": "^3.0.6",
