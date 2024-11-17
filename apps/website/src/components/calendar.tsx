@@ -85,7 +85,7 @@ const numberToTime = (n: number, showMinutes: boolean = false) => {
   }
 };
 
-const CurrentTimeIndicator = () => {
+export const CalendarCurrentTimeIndicator = () => {
   const calendar = useCalendar();
   const [now, setNow] = React.useState(new Date());
   const currentHour = useMemo(
@@ -226,7 +226,6 @@ export const Calendar: React.FC<CalendarProps> = ({
               ))}
             </>
           ))}
-          <CurrentTimeIndicator />
           {children}
         </div>
       </div>
