@@ -3,11 +3,7 @@ import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { useAuth } from "~/components/auth";
 import { Button } from "~/components/ui/button";
 
-export const Route = createRootRoute({
-  component: () => Root,
-});
-
-export const Root = () => {
+const MainRoute = () => {
   const auth = useAuth();
   const isLoggedIn = useAuth((s) => s.loggedIn);
   function login() {
@@ -38,3 +34,7 @@ export const Root = () => {
     </>
   );
 };
+
+export const Route = createRootRoute({
+  component: MainRoute,
+});
