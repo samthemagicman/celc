@@ -29,12 +29,13 @@ function Index() {
   const [clickedEvent, setClickedEvent] = React.useState<
     null | (typeof events)[0]
   >(null);
+  const [modalOpen, setModalOpen] = React.useState(false);
   return (
     <div>
       <Modal
-        isOpen={clickedEvent !== null}
+        isOpen={modalOpen}
         onRequestClose={() => {
-          setClickedEvent(null);
+          setModalOpen(false);
         }}
       >
         <ModalContent>
@@ -54,7 +55,7 @@ function Index() {
           <ModalFooter>
             <Button
               onClick={() => {
-                setClickedEvent(null);
+                setModalOpen(false);
               }}
             >
               Close
@@ -67,6 +68,7 @@ function Index() {
         events={events}
         onEventClick={(event) => {
           setClickedEvent(event);
+          setModalOpen(true);
         }}
       />
     </div>

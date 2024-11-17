@@ -24,9 +24,30 @@ const Modal: React.FC<ModalProps> = ({
     [isOpen, onRequestClose],
   );
 
-  if (!isOpen) {
-    return null;
-  }
+  const [mounted, setMounted] = React.useState(false);
+  const [transitionedIn, setTransitionedIn] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      setTransitionedIn(false);
+      const timeout = setTimeout(() => {
+        setMounted(false);
+      }, 200);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    } else {
+      setMounted(true);
+    }
+    if (mounted && isOpen) {
+      setTimeout(() => {
+        setTransitionedIn(true);
+      }, 10);
+    }
+  }, [isOpen, mounted]);
+
+  if (!mounted) return null;
 
   return (
     <>
@@ -36,9 +57,21 @@ const Modal: React.FC<ModalProps> = ({
           <div>
             <button
               onClick={() => onRequestClose?.()}
-              className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[999]"
+              className={cn(
+                "fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[999] transition-all",
+                {
+                  "pointer-events-none": !transitionedIn,
+                  "bg-transparent": !transitionedIn,
+                },
+              )}
             ></button>
-            <ModalContainer>{children}</ModalContainer>
+            <ModalContainer
+              className={cn("transition-all duration-100 top-0", {
+                "opacity-0 pointer-events-none top-10": !transitionedIn,
+              })}
+            >
+              {children}
+            </ModalContainer>
           </div>
         </ModalContext.Provider>,
         document.body,
@@ -49,9 +82,15 @@ const Modal: React.FC<ModalProps> = ({
 
 const ModalContainer: React.FC<{
   children: React.ReactNode;
-}> = ({ children }) => {
+  className?: string;
+}> = ({ children, className }) => {
   return (
-    <div className="fixed top-0 left-0 w-full h-full pointer-events-none flex justify-center items-center z-[999]">
+    <div
+      className={cn(
+        "fixed top-0 left-0 w-full h-full pointer-events-none flex justify-center items-center z-[999]",
+        className,
+      )}
+    >
       {children}
     </div>
   );
