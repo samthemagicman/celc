@@ -9,7 +9,7 @@
     "website": "pnpm run --filter website dev",
     "with-env": "dotenv -e ./.env --",
     "api": "pnpm run with-env pnpm run --filter api dev",
-    "lint": "eslint .",
+    "lint": "pnpm run -r lint",
     "build": "pnpm run -r build",
     "format": "prettier --write .",
     "db:push": "pnpm run with-env pnpm run --filter database db:push",
