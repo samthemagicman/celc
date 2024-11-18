@@ -86,7 +86,7 @@ export const numberToTime = (n: number, showMinutes: boolean = false) => {
 };
 
 export const CalendarCurrentTimeIndicator = () => {
-  const calendar = useCalendar();
+  const calendar = useCalendarColumn();
   const [now, setNow] = React.useState(new Date());
   const currentHour = useMemo(
     () => now.getHours() + now.getMinutes() / 60,
@@ -119,9 +119,11 @@ export const CalendarCurrentTimeIndicator = () => {
   );
 };
 
-const CalendarContext = React.createContext<CalendarContextType | null>(null);
-const useCalendar = () => {
-  const context = React.useContext(CalendarContext);
+const CalendarColumnContext = React.createContext<CalendarContextType | null>(
+  null,
+);
+const useCalendarColumn = () => {
+  const context = React.useContext(CalendarColumnContext);
   if (!context) {
     throw new Error("useCalendar must be used within a CalendarProvider");
   }
@@ -133,17 +135,17 @@ type CalendarProps = {
   endHour: number;
   children?: React.ReactNode;
   events?: DatabaseEvent[];
-  renderTimes?: boolean;
   onEventClick?: (event: DatabaseEvent) => void;
+  className?: string;
 };
 
-export const Calendar: React.FC<CalendarProps> = ({
+export const CalendarColumn: React.FC<CalendarProps> = ({
   children,
   startHour,
   endHour,
   events,
-  renderTimes = true,
   onEventClick,
+  className,
 }) => {
   const rows = Array.from({ length: endHour - startHour + 1 });
 
@@ -152,7 +154,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   }, [events]);
 
   return (
-    <CalendarContext.Provider
+    <CalendarColumnContext.Provider
       value={useMemo(
         () => ({
           startHour,
@@ -161,24 +163,13 @@ export const Calendar: React.FC<CalendarProps> = ({
         [startHour, endHour],
       )}
     >
-      <div className="flex flex-row relative">
-        {renderTimes && (
-          <div className="flex flex-col items-center px-1">
-            {rows.map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  height: rowHeight,
-                }}
-              >
-                <p className="text-xs text-end">
-                  {numberToTime(i + startHour)}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-        <div className="flex-1 self-stretch relative">
+      <div className={cn("flex flex-row relative", className)}>
+        <div
+          className="flex-1 self-stretch relative"
+          style={{
+            minHeight: `calc(${rowHeight} * ${rows.length})`,
+          }}
+        >
           {rows.map((_, i) => (
             <div
               key={i}
@@ -234,7 +225,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           {children}
         </div>
       </div>
-    </CalendarContext.Provider>
+    </CalendarColumnContext.Provider>
   );
 };
 
@@ -265,7 +256,7 @@ const CalendarEvent: React.FC<{
   backgroundColor,
   onClick,
 }) => {
-  const calendar = React.useContext(CalendarContext);
+  const calendar = React.useContext(CalendarColumnContext);
   const calendarRow = React.useContext(EventColumnContainerContext);
   const row = calendarRow?.row
     ? startHour - calendarRow.row
@@ -338,5 +329,34 @@ const CalendarEvent: React.FC<{
         </div>
       </div>
     </button>
+  );
+};
+
+type CalendarTimesProps = {
+  startHour: number;
+  endHour: number;
+  className?: string;
+};
+
+export const CalendarTimes: React.FC<CalendarTimesProps> = ({
+  endHour,
+  startHour,
+  className,
+}) => {
+  const rows = Array.from({ length: endHour - startHour + 1 });
+  return (
+    <div className={cn("flex flex-col items-center px-1", className)}>
+      {rows.map((_, i) => (
+        <div
+          key={i}
+          style={{
+            height: rowHeight,
+          }}
+          className="min-w-max"
+        >
+          <p className="text-xs text-end">{numberToTime(i + startHour)}</p>
+        </div>
+      ))}
+    </div>
   );
 };

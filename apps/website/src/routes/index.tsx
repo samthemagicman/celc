@@ -1,7 +1,6 @@
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import React from "react";
-import { numberToTime } from "~/components/calendar";
-import { FullCalendar } from "~/components/full-calendar";
+import { Calendar, numberToTime } from "~/components/calendar";
 import { Button } from "~/components/ui/button";
 import {
   Modal,
@@ -64,7 +63,7 @@ function Index() {
         </ModalContent>
       </Modal>
       <h1 className="text-xl font-bold my-4 text-center">Event Calendar</h1>
-      <FullCalendar
+      <Calendar
         events={events}
         onEventClick={(event) => {
           setClickedEvent(event);
