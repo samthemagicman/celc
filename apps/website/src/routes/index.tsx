@@ -1,15 +1,7 @@
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import React from "react";
-import { Calendar, numberToTime } from "~/components/calendar";
-import { Button } from "~/components/ui/button";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-} from "~/components/ui/modal";
+import { Calendar } from "~/components/calendar";
+import { CalendarEventModal } from "~/components/calendar/calendar-event-modal";
 import { trpc } from "~/lib/api";
 
 export const Route = createFileRoute("/")({
@@ -31,37 +23,11 @@ function Index() {
   const [modalOpen, setModalOpen] = React.useState(false);
   return (
     <div>
-      <Modal
+      <CalendarEventModal
+        event={clickedEvent}
         isOpen={modalOpen}
-        onRequestClose={() => {
-          setModalOpen(false);
-        }}
-      >
-        <ModalContent>
-          <ModalHeader>
-            <ModalTitle>{clickedEvent?.title}</ModalTitle>
-            <div className="text-sm">
-              <p>
-                {numberToTime(clickedEvent?.startHour || 0, true)} -{" "}
-                {numberToTime(clickedEvent?.endHour || 0, true)}
-              </p>
-              <p>{clickedEvent?.location}</p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <p>{clickedEvent?.description}</p>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              onClick={() => {
-                setModalOpen(false);
-              }}
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        onRequestClose={() => setModalOpen(false)}
+      />
       <h1 className="text-xl font-bold my-4 text-center">Event Calendar</h1>
       <Calendar
         events={events}

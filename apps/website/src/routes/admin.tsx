@@ -1,15 +1,141 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { DatabaseEvent } from "@repo/types/database";
+import { createFileRoute } from "@tanstack/react-router";
 import { CalendarCheck, CalendarX } from "lucide-react";
-import { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Calendar, CalendarEvent } from "~/components/calendar";
 import { Button } from "~/components/ui/button";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+} from "~/components/ui/modal";
 import { trpc } from "~/lib/api";
 import { cn } from "~/lib/utils";
 
-export const Route = createLazyFileRoute("/about")({
-  component: About,
+type Event = DatabaseEvent;
+
+export const Route = createFileRoute("/admin")({
+  component: MainComponent,
+  loader: async () => {
+    const events = await trpc.event.getAllEvents.query();
+    return { events };
+  },
 });
 
-function About() {
+function MainComponent() {
+  const db = Route.useLoaderData();
+  const [inPreview, setInPreview] = useState(false);
+  const [unsavedEvents, setUnsavedEvents] = useState<Event[]>([]);
+  const [savedEvents, setSavedEvents] = useState<Event[]>([]);
+  const [deletedEvents, setDeletedEvents] = useState<Event[]>([]);
+
+  const events = useMemo(() => {
+    if (inPreview) {
+      return [...savedEvents, ...unsavedEvents].filter(
+        (e) => !deletedEvents.includes(e),
+      );
+    }
+    return [...savedEvents, ...unsavedEvents];
+  }, [savedEvents, unsavedEvents, deletedEvents, inPreview]);
+
+  useEffect(() => {
+    setSavedEvents(db.events);
+  }, [db]);
+
+  function addEventToPreview(event: Event) {
+    event.id = unsavedEvents.length;
+    setUnsavedEvents((prevEvents) => [...prevEvents, event]);
+  }
+
+  async function saveEvents() {
+    for (const event of unsavedEvents) {
+      await trpc.event.create.mutate({
+        ...event,
+        id: undefined,
+      });
+    }
+    for (const event of deletedEvents) {
+      const inSavedEvents = savedEvents.find((e) => e === event);
+      if (inSavedEvents) {
+        await trpc.event.delete.mutate({
+          id: event.id,
+        });
+      }
+    }
+
+    setSavedEvents(
+      [...savedEvents, ...unsavedEvents].filter(
+        (e) => !deletedEvents.includes(e),
+      ),
+    );
+    setUnsavedEvents([]);
+    setDeletedEvents([]);
+  }
+
+  return (
+    <div>
+      <div className="w-full flex p-3 gap-3 items-center bg-gray-100">
+        <h1 className="text-xl font-bold">
+          {" "}
+          {inPreview ? "Previewing" : "Editing"} Calendar
+        </h1>
+        <div className="flex-1"></div>
+        <Button
+          variant="secondary"
+          className={cn({
+            "bg-blue-600 hover:bg-blue-500 text-primary-foreground": inPreview,
+          })}
+          onClick={() => {
+            setInPreview(!inPreview);
+          }}
+        >
+          Preview Mode
+        </Button>
+        <AddEvent onEventAdded={addEventToPreview} />
+        <Button onClick={saveEvents}>Save Changes</Button>
+      </div>
+      <hr />
+      <Calendar
+        events={events}
+        onEventClick={(event) => {
+          if (inPreview) return;
+          if (unsavedEvents.includes(event)) {
+            setUnsavedEvents(unsavedEvents.filter((e) => e !== event));
+          } else if (deletedEvents.includes(event)) {
+            setDeletedEvents(deletedEvents.filter((e) => e !== event));
+          } else {
+            setDeletedEvents([...deletedEvents, event]);
+          }
+        }}
+        renderEvent={
+          !inPreview
+            ? (event, props) => {
+                return (
+                  <CalendarEvent
+                    {...props}
+                    className={cn({
+                      "bg-red-500 rounded-sm": deletedEvents.includes(event),
+                    })}
+                    buttonClassName={cn({
+                      "opacity-60 bg-green-500":
+                        unsavedEvents.includes(event) ||
+                        deletedEvents.includes(event),
+                    })}
+                  />
+                );
+              }
+            : undefined
+        }
+      />
+    </div>
+  );
+}
+
+type AddEventProps = {
+  onEventAdded?: (event: Event) => void;
+};
+const AddEvent: React.FC<AddEventProps> = ({ onEventAdded }) => {
   //States for the form inputs
   //Format: var to hold current value, function to be called to update it, useState is init state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -151,16 +277,17 @@ function About() {
         alert("Start time must be earlier than end time.");
         return; // Exit the function if validation fails
       }
-      const data = await trpc.event.create.mutate({
-        day: day,
-        startHour: calculateRealTime(startTime),
+
+      onEventAdded?.({
+        backgroundColor,
+        day,
+        description,
         endHour: calculateRealTime(endTime),
-        title: title,
-        description: description,
-        location: location,
-        backgroundColor: backgroundColor,
+        location,
+        startHour: calculateRealTime(startTime),
+        id: 0,
+        title,
       });
-      console.log("Event created:", data);
 
       //Reset
       setIsModalOpen(false);
@@ -174,20 +301,23 @@ function About() {
   return (
     <div>
       {/* Button for opening the widget */}
-      <Button onClick={() => setIsModalOpen(true)}>
-        <img
-          src="apps/website/src/icons/CreateIcon.png"
-          alt="Create Event"
-          className="w-6 h-6 inline"
-        />
-        {/* May have to chage size and position later */}
+      <Button variant="outline" onClick={() => setIsModalOpen(true)}>
+        Add Event
       </Button>
 
       {/* Pop-Up Structure */}
       {isModalOpen && (
-        <div className="fixed flex top-0 left-0 right-0 bottom-0 bg-black/50 justify-center items-center z-[1000]">
-          <div className="m-3 p-5 rounded-md shadow-md max-w-screen-md bg-white">
-            <h2 className="mb-4 text-xl font-bold">Create Event</h2>
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={() => {
+            setIsModalOpen(false);
+            resetForm();
+          }}
+        >
+          <ModalContent>
+            <ModalHeader>
+              <ModalTitle>Create Event</ModalTitle>
+            </ModalHeader>
             <form
               className="flex flex-col gap-3"
               onSubmit={(e) => {
@@ -291,6 +421,7 @@ function About() {
                 <div className="flex space-x-2 mt-2 items-stretch">
                   {colorOptions.map((color) => (
                     <button
+                      type="button"
                       key={color}
                       onClick={() => setBackgroundColor(color)}
                       className={cn(
@@ -326,9 +457,9 @@ function About() {
                 </Button>
               </div>
             </form>
-          </div>
-        </div>
+          </ModalContent>
+        </Modal>
       )}
     </div>
   );
-}
+};

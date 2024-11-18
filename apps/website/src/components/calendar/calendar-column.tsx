@@ -137,6 +137,10 @@ type CalendarProps = {
   events?: DatabaseEvent[];
   onEventClick?: (event: DatabaseEvent) => void;
   className?: string;
+  renderEvent?: (
+    event: DatabaseEvent,
+    props: React.ComponentProps<typeof CalendarEvent>,
+  ) => React.ReactNode;
 };
 
 export const CalendarColumn: React.FC<CalendarProps> = ({
@@ -146,12 +150,69 @@ export const CalendarColumn: React.FC<CalendarProps> = ({
   events,
   onEventClick,
   className,
+  renderEvent,
 }) => {
   const rows = Array.from({ length: endHour - startHour + 1 });
 
   const organizedEvents = useMemo(() => {
     return events ? [organizeEvents(events)] : [];
   }, [events]);
+
+  const calendarEventElements = useMemo(() => {
+    return organizedEvents?.map((eventGroup) => (
+      <>
+        {eventGroup.map((eventColumn, x) => (
+          <>
+            {eventColumn.map((event) => {
+              const columnCount = eventGroup.length;
+              const columnOffset = (1 / columnCount) * x;
+              let columnWidth = 1 / columnCount;
+              console.log(columnWidth);
+
+              // Stretch the column if there are no overlapping events in the next columns
+              const nextColumn = eventGroup.slice(x + 1);
+              if (nextColumn.length > 0) {
+                // this could be a lot better
+                const overlapping = nextColumn.some((e) => {
+                  return getOverlappingEvents(event, e).length > 0;
+                });
+
+                if (!overlapping) {
+                  columnWidth = (1 / columnCount) * (nextColumn.length + 1);
+                }
+              }
+
+              return renderEvent ? (
+                renderEvent(event, {
+                  backgroundColor: event.backgroundColor ?? "bg-primary",
+                  startHour: event.startHour,
+                  endHour: event.endHour,
+                  title: event.title,
+                  location: event.location,
+                  onClick: () => onEventClick?.(event),
+                  horizontalOffset: columnOffset,
+                  width: columnWidth,
+                })
+              ) : (
+                <CalendarEvent
+                  location={event.location}
+                  backgroundColor={event.backgroundColor ?? "bg-primary"}
+                  width={columnWidth}
+                  horizontalOffset={columnOffset}
+                  title={event.title}
+                  startHour={event.startHour}
+                  endHour={event.endHour}
+                  onClick={() => {
+                    onEventClick?.(event);
+                  }}
+                />
+              );
+            })}
+          </>
+        ))}
+      </>
+    ));
+  }, [organizedEvents, onEventClick, renderEvent]);
 
   return (
     <CalendarColumnContext.Provider
@@ -179,49 +240,7 @@ export const CalendarColumn: React.FC<CalendarProps> = ({
               }}
             ></div>
           ))}
-          {organizedEvents?.map((eventGroup) => (
-            <>
-              {eventGroup.map((eventColumn, x) => (
-                <>
-                  {eventColumn.map((event, i) => {
-                    const columnCount = eventGroup.length;
-                    const columnOffset = (1 / columnCount) * x;
-                    let columnWidth = 1 / columnCount;
-
-                    // Stretch the column if there are no overlapping events in the next columns
-                    const nextColumn = eventGroup.slice(x + 1);
-                    if (nextColumn.length > 0) {
-                      // this could be a lot better
-                      const overlapping = nextColumn.some((e) => {
-                        return getOverlappingEvents(event, e).length > 0;
-                      });
-
-                      if (!overlapping) {
-                        columnWidth =
-                          (1 / columnCount) * (nextColumn.length + 1);
-                      }
-                    }
-
-                    return (
-                      <CalendarEvent
-                        location={event.location}
-                        backgroundColor={event.backgroundColor ?? "bg-primary"}
-                        width={columnWidth}
-                        horizontalOffset={columnOffset}
-                        key={i}
-                        title={event.title}
-                        startHour={event.startHour}
-                        endHour={event.endHour}
-                        onClick={() => {
-                          onEventClick?.(event);
-                        }}
-                      />
-                    );
-                  })}
-                </>
-              ))}
-            </>
-          ))}
+          {calendarEventElements}
           {children}
         </div>
       </div>
@@ -235,12 +254,13 @@ type EventColumnContainerContextType = {
 const EventColumnContainerContext =
   React.createContext<EventColumnContainerContextType | null>(null);
 
-const CalendarEvent: React.FC<{
+export const CalendarEvent: React.FC<{
   startHour: number;
   endHour: number;
   width?: number;
   horizontalOffset?: number;
   className?: string;
+  buttonClassName?: string;
   location?: string;
   backgroundColor?: string;
   title: string;
@@ -254,6 +274,7 @@ const CalendarEvent: React.FC<{
   width,
   horizontalOffset,
   backgroundColor,
+  buttonClassName,
   onClick,
 }) => {
   const calendar = React.useContext(CalendarColumnContext);
@@ -292,6 +313,7 @@ const CalendarEvent: React.FC<{
       <div
         className={cn(
           "w-full h-full bg-primary rounded-lg relative overflow-hidden flex flex-row",
+          buttonClassName,
         )}
         style={{
           backgroundColor: backgroundColor,

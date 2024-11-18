@@ -9,22 +9,27 @@ import {
 import { DaySelector } from "./day-selector";
 
 const days = [
-  "Monday",
-  "Tuesday",
   "Wednesday",
   "Thursday",
   "Friday",
   "Saturday",
   "Sunday",
+  "Monday",
+  "Tuesday",
 ];
 
 type CalendarProps = {
   events: ComponentProps<typeof CalendarColumn>["events"];
+  renderEvent?: ComponentProps<typeof CalendarColumn>["renderEvent"];
   onEventClick?: ComponentProps<typeof CalendarColumn>["onEventClick"];
 };
 
 // Displays the full calendar including day selection
-export const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
+export const Calendar: React.FC<CalendarProps> = ({
+  events,
+  onEventClick,
+  renderEvent,
+}) => {
   const { width } = useWindowDimensions();
   const [selectedDay, setSelectedDay] = React.useState(0);
 
@@ -61,6 +66,7 @@ export const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
         <div className="flex flex-row">
           <CalendarTimes startHour={7} endHour={24} />
           <CalendarColumn
+            renderEvent={renderEvent}
             className="flex-1"
             startHour={7}
             endHour={24}
@@ -86,6 +92,7 @@ export const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
               >
                 <p className="text-center font-bold">{days[i]}</p>
                 <CalendarColumn
+                  renderEvent={renderEvent}
                   onEventClick={onEventClick}
                   startHour={7}
                   endHour={24}
