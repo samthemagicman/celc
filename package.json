@@ -15,7 +15,8 @@
     "db:push": "pnpm run with-env pnpm run --filter database db:push",
     "db:studio": "pnpm run with-env pnpm run --filter database db:studio",
     "db:migrate": "pnpm run with-env pnpm run --filter database db:migrate",
-    "db:generate": "pnpm run with-env pnpm run --filter database db:generate"
+    "db:generate": "pnpm run with-env pnpm run --filter database db:generate",
+    "db:seed": "pnpm run with-env pnpm run --filter database db:seed"
   },
   "keywords": [],
   "author": "",

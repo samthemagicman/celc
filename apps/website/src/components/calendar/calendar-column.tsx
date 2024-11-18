@@ -167,7 +167,6 @@ export const CalendarColumn: React.FC<CalendarProps> = ({
               const columnCount = eventGroup.length;
               const columnOffset = (1 / columnCount) * x;
               let columnWidth = 1 / columnCount;
-              console.log(columnWidth);
 
               // Stretch the column if there are no overlapping events in the next columns
               const nextColumn = eventGroup.slice(x + 1);
@@ -261,7 +260,7 @@ export const CalendarEvent: React.FC<{
   horizontalOffset?: number;
   className?: string;
   buttonClassName?: string;
-  location?: string;
+  location?: string | null;
   backgroundColor?: string;
   title: string;
   onClick?: () => void;
@@ -296,7 +295,7 @@ export const CalendarEvent: React.FC<{
   return (
     <button
       className={cn(
-        "w-full z-30 select-none cursor-pointer p-px active:opacity-90 duration-100 transition-all",
+        "w-full z-30 select-none cursor-pointer p-px active:opacity-90",
         !calendarRow && "absolute",
         className,
       )}
@@ -322,7 +321,7 @@ export const CalendarEvent: React.FC<{
         <div className="px-2 py-1 flex flex-col">
           <div
             className={cn(
-              "text-white text-start tracking-wider text-xs xs:text-sm sm:text-base font-semibold text-ellipsis break-all line-clamp-1",
+              "text-white text-start tracking-wider text-xs xs:text-sm sm:text-base font-semibold text-ellipsis break-all line-clamp-none lg:line-clamp-1",
             )}
           >
             {title}
@@ -367,12 +366,12 @@ export const CalendarTimes: React.FC<CalendarTimesProps> = ({
 }) => {
   const rows = Array.from({ length: endHour - startHour + 1 });
   return (
-    <div className={cn("flex flex-col items-center px-1", className)}>
+    <div className={cn("flex flex-col items-center", className)}>
       {rows.map((_, i) => (
         <div
           key={i}
           style={{
-            height: rowHeight,
+            height: `calc(${rowHeight})`,
           }}
           className="min-w-max"
         >

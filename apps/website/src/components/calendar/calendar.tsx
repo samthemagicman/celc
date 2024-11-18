@@ -62,9 +62,9 @@ export const Calendar: React.FC<CalendarProps> = ({
   // see https://stackoverflow.com/questions/59982018/how-do-i-get-tailwinds-active-breakpoint-in-javascript
   if (width < 1024) {
     mainContent = (
-      <div className="px-2">
+      <div className="px-1">
         <div className="flex flex-row">
-          <CalendarTimes startHour={7} endHour={24} />
+          <CalendarTimes startHour={7.5} endHour={24} />
           <CalendarColumn
             renderEvent={renderEvent}
             className="flex-1"
@@ -81,20 +81,20 @@ export const Calendar: React.FC<CalendarProps> = ({
   } else {
     mainContent = (
       <div className="flex flex-row">
-        <CalendarTimes startHour={7} endHour={24} className="mt-[1.5rem]" />
-        <DraggableDiv scrollYRoot className="flex-row overflow-x-auto flex">
+        <CalendarTimes startHour={7.5} endHour={24} className="mt-[1.5rem]" />
+        <DraggableDiv
+          scrollYRoot
+          className="flex-row overflow-x-auto flex gap-12"
+        >
           {
             // render all events separated by day
             eventsSeparatedByDay.map((events, i) => (
-              <div
-                key={days[i]}
-                className="flex-1 min-w-[40rem] border-r border-gray-200"
-              >
+              <div key={days[i]} className="flex-1 min-w-[40rem]">
                 <p className="text-center font-bold">{days[i]}</p>
                 <CalendarColumn
                   renderEvent={renderEvent}
                   onEventClick={onEventClick}
-                  startHour={7}
+                  startHour={7.5}
                   endHour={24}
                   events={events}
                 />
