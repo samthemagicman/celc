@@ -60,4 +60,7 @@ export const eventRouter = router({
     // Deletes all events without any conditions
     await ctx.db.delete(schema.event);
   }),
+
+  //Get User id, to create user_event
+  // addUserEvent:
 });

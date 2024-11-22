@@ -32,7 +32,13 @@ const MainRoute = () => {
         </Link>{" "}
         <Link to="/admin" className="[&.active]:font-bold">
           Admin
+        </Link>{" "}
+        {/* {Conditional rendering cool stuff} */}
+        {isLoggedIn && (
+        <Link to="/mycalendar" className="[&.active]:font-bold">
+          My Calendar
         </Link>
+        )}
         <div className="w-full" />
         {!isLoggedIn ? (
           <Button onClick={login}>Login</Button>
