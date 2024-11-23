@@ -8,6 +8,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
+    "db:create-db-file": "npx tsx create-db-file",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "npx tsx seed",
     "build": "tsc"

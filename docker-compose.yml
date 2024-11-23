@@ -1,4 +1,15 @@
 services:
+  db-migration:
+    container_name: db-migration
+    build:
+      context: .
+      dockerfile: ./packages/database/dockerfile
+    restart: on-failure:3
+    volumes:
+      - ./db.sqlite:/app/db.sqlite
+    environment:
+      - NODE_ENV=production
+      - DB_LOCATION=file:/app/db.sqlite # Example environment variable
   api:
     container_name: api
     build:
