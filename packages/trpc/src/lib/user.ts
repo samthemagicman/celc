@@ -21,5 +21,20 @@ export const verifyOrCreateUserInDatabase = async (
         role: "user",
       })
       .execute();
+
+    //On Creation of a User, we inser first calendar event as default test
+    const firstEvent = await db
+      .select()
+      .from(schema.event)
+      .limit(1)
+      .then((res) => res[0]);
+
+    await db
+      .insert(schema.userEvents)
+      .values({
+        userId: discordId,
+        eventId: firstEvent.id, //No events was created user
+      })
+      .execute();
   }
 };

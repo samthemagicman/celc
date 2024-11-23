@@ -20,7 +20,7 @@ type Event = DatabaseEvent;
 export const Route = createFileRoute("/mycalendar")({
   component: MyCalendar,
   loader: async () => {
-    return { events: await trpc.event.getAllEvents.query() };
+    return { events: await trpc.userevents.getPersonalCalendar.query() };
   },
   gcTime: 0,
   shouldReload: false,
