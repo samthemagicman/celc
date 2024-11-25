@@ -35,9 +35,9 @@ const MainRoute = () => {
         </Link>{" "}
         {/* {Conditional rendering cool stuff} */}
         {isLoggedIn && (
-        <Link to="/mycalendar" className="[&.active]:font-bold">
-          My Calendar
-        </Link>
+          <Link to="/my-calendar" className="[&.active]:font-bold">
+            My Calendar
+          </Link>
         )}
         <div className="w-full" />
         {!isLoggedIn ? (
