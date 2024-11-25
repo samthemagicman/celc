@@ -28,6 +28,6 @@ export const userEvents = sqliteTable("user_events", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }), //That's cool, deletes user here if user gets deleted
   eventId: int()
-    // .notNull()
+    .notNull()
     .references(() => event.id, { onDelete: "cascade" }), //ref to event's table
 });

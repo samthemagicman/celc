@@ -1,26 +1,18 @@
 import { DatabaseEvent } from "@repo/types/database";
-import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { CalendarEventModal } from "~/components/calendar/calendar-event-modal";
-import { CalendarCheck, CalendarX } from "lucide-react";
 import { Calendar, CalendarEvent } from "~/components/calendar";
+import { CalendarEventModal } from "~/components/calendar/calendar-event-modal";
 import { Button } from "~/components/ui/button";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-} from "~/components/ui/modal";
 import { trpc } from "~/lib/api";
 import { cn } from "~/lib/utils";
 
-
 type Event = DatabaseEvent;
 
-export const Route = createFileRoute("/mycalendar")({
+export const Route = createFileRoute("/my-calendar")({
   component: MyCalendar,
   loader: async () => {
-    return { events: await trpc.userevents.getPersonalCalendar.query() };
+    return { events: await trpc.userEvents.getPersonalCalendar.query() };
   },
   gcTime: 0,
   shouldReload: false,
@@ -33,7 +25,9 @@ function MyCalendar() {
   const [unsavedEvents, setUnsavedEvents] = useState<Event[]>([]);
   const [savedEvents, setSavedEvents] = useState<Event[]>([]);
   const [deletedEvents, setDeletedEvents] = useState<Event[]>([]);
-  const [clickedEvent, setClickedEvent] = React.useState<null | (typeof events)[0]>(null);
+  const [clickedEvent, setClickedEvent] = React.useState<
+    null | (typeof events)[0]
+  >(null);
   const [modalOpen, setModalOpen] = React.useState(false);
 
   const events = useMemo(() => {
@@ -48,11 +42,6 @@ function MyCalendar() {
   useEffect(() => {
     setSavedEvents(db.events);
   }, [db]);
-
-  function addEventToPreview(event: Event) {
-    event.id = unsavedEvents.length;
-    setUnsavedEvents((prevEvents) => [...prevEvents, event]);
-  }
 
   async function saveEvents() {
     for (const event of unsavedEvents) {
@@ -81,10 +70,10 @@ function MyCalendar() {
 
   return (
     <div>
-        <CalendarEventModal
-          event={clickedEvent}
-          isOpen={modalOpen}
-          onRequestClose={() => setModalOpen(false)}
+      <CalendarEventModal
+        event={clickedEvent}
+        isOpen={modalOpen}
+        onRequestClose={() => setModalOpen(false)}
       />
       <div className="w-full flex p-3 gap-3 items-center bg-gray-100">
         <h1 className="text-xl font-bold">
@@ -107,23 +96,22 @@ function MyCalendar() {
         <Button onClick={saveEvents}>Save Changes</Button>
       </div>
       <hr />
-      
+
       <Calendar
         events={events}
         onEventClick={(event) => {
-          if (inPreview){
-              //Open modal when in preview mode
-              setClickedEvent(event);
-              setModalOpen(true);
-          }else if (unsavedEvents.includes(event)) {
+          if (inPreview) {
+            //Open modal when in preview mode
+            setClickedEvent(event);
+            setModalOpen(true);
+          } else if (unsavedEvents.includes(event)) {
             setUnsavedEvents(unsavedEvents.filter((e) => e !== event));
           } else if (deletedEvents.includes(event)) {
             setDeletedEvents(deletedEvents.filter((e) => e !== event));
           } else {
             setDeletedEvents([...deletedEvents, event]);
           }
-        }
-      }
+        }}
         renderEvent={
           !inPreview
             ? (event, props) => {
@@ -147,11 +135,3 @@ function MyCalendar() {
     </div>
   );
 }
-//What are we creating?
-// //Page where events can be added 
-// function MainComponent() {
-//   const db = Route.useLoaderData();
-//   const [addEvent,setAddedEvents] = useState<Event[]>([]);
-//   const [removeEvent, setRemovedEvents] = useState<Event[]>([])
-
-//   // db.users = 

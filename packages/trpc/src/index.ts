@@ -1,8 +1,8 @@
 import { eventRouter } from "./routes/admin/events";
+import { UserCalendarRouter } from "./routes/auth/user-calendar";
 import { userRouter } from "./routes/auth/userInfo";
 import { loginRouter } from "./routes/public/login";
 import { testRouter } from "./routes/public/test";
-import { UserCalendarRouter } from "./routes/auth/usercalendar";
 import { router } from "./trpc";
 
 export const appRouter = router({
@@ -10,7 +10,7 @@ export const appRouter = router({
   event: eventRouter,
   login: loginRouter,
   user: userRouter,
-  userevents: UserCalendarRouter,
+  userEvents: UserCalendarRouter,
 });
 
 export type AppRouter = typeof appRouter;

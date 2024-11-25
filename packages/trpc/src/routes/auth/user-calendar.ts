@@ -1,5 +1,5 @@
-import { authProcedure, router } from "../../trpc";
 import { db, eq, schema } from "@repo/database";
+import { authProcedure, router } from "../../trpc";
 
 export const UserCalendarRouter = router({
   getPersonalCalendar: authProcedure.query(async ({ ctx }) => {
