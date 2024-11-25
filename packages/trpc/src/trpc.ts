@@ -35,13 +35,6 @@ const t = initTRPC.context<Context>().create();
  */
 export const router = t.router;
 export const publicProcedure = t.procedure;
-export const adminProcedure = publicProcedure.use(async (opts) => {
-  if (!opts.ctx.req) {
-    throw new Error("No request");
-  }
-
-  return opts.next();
-});
 // Authenticated procedure
 export const authProcedure = publicProcedure.use(async (opts) => {
   if (!opts.ctx.req) {
@@ -62,4 +55,14 @@ export const authProcedure = publicProcedure.use(async (opts) => {
       userInfo,
     },
   });
+});
+export const adminProcedure = authProcedure.use(async (opts) => {
+  if (!opts.ctx.req) {
+    throw new Error("No request");
+  }
+  if (opts.ctx.userInfo.role !== "admin") {
+    throw new Error("Unauthorized");
+  }
+
+  return opts.next();
 });

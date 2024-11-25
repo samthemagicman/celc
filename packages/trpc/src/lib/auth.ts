@@ -1,3 +1,4 @@
+import { db, eq, schema } from "@repo/database";
 import { IncomingMessage, ServerResponse } from "http";
 import jwt from "jsonwebtoken";
 import * as oidclient from "openid-client";
@@ -12,6 +13,7 @@ if (!process.env.AUTH_SIGNING_KEY) {
 }
 
 type UserInfo = {
+  role: string;
   id: string;
   username: string;
   email: string;
@@ -39,14 +41,26 @@ const discordOauthConfig = new oidclient.Configuration(
 
 const signingKey = process.env.AUTH_SIGNING_KEY;
 
+function getUserRole(userId: string) {
+  return db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.id, userId))
+    .then((users) => users[0].role);
+}
+
 export const discordAuth = {
   logout: async (_req: IncomingMessage, res: ServerResponse) => {
     // Discord doesn't provide token revocation, so we would have to create a custom solution. For now, we just delete the cookies.
 
     deleteCookie(res, CookieNames.AccessToken);
     deleteCookie(res, CookieNames.RefreshToken);
-    deleteCookie(res, CookieNames.JsonWebToken);
-    deleteCookie(res, CookieNames.CodeVerifier);
+    deleteCookie(res, CookieNames.JsonWebToken, {
+      path: "/",
+    });
+    deleteCookie(res, CookieNames.CodeVerifier, {
+      path: "/",
+    });
   },
   exchangePkceCode: async (url: URL, pkceCodeVerifier: string) => {
     return await oidclient.authorizationCodeGrant(discordOauthConfig, url, {
@@ -69,6 +83,9 @@ export const discordAuth = {
       throw new Error("No username");
     }
 
+    const userRole = await getUserRole(userInfoJson.id);
+    userInfoJson.role = userRole;
+
     return userInfoJson as UserInfo;
   },
   getJwt: async (userData: UserInfo) => {
@@ -78,6 +95,7 @@ export const discordAuth = {
         sub: userData.id,
         iss: "https://discord.com",
         aud: [process.env.DISCORD_CLIENT_ID],
+        role: userData.role,
       },
       signingKey,
       {
@@ -122,6 +140,7 @@ const setAuthCookies = async (
       secure: true,
       sameSite: "strict",
       maxAge: 15 * 60,
+      path: "/",
     });
   if (tokens.refresh_token)
     setCookie(res, CookieNames.RefreshToken, tokens.refresh_token, {
@@ -215,7 +234,7 @@ export const validateJwtFromReq = async (
   try {
     verifiedJwt = jwt.verify(jwtCookie, signingKey, {
       audience: process.env.DISCORD_CLIENT_ID,
-    }) as { username: string; sub: string };
+    }) as { username: string; sub: string; role: string };
   } catch (err) {
     const jwtError = err as jwt.JsonWebTokenError;
     switch (jwtError.name) {
@@ -230,7 +249,7 @@ export const validateJwtFromReq = async (
         setAuthCookies(res, { jwt: newJwt });
         verifiedJwt = jwt.verify(newJwt, signingKey, {
           audience: process.env.DISCORD_CLIENT_ID,
-        }) as { username: string; sub: string };
+        }) as { username: string; sub: string; role: string };
         break;
       }
     }
@@ -243,5 +262,6 @@ export const validateJwtFromReq = async (
   return {
     username: verifiedJwt.username,
     userId: verifiedJwt.sub,
+    role: verifiedJwt.role,
   };
 };

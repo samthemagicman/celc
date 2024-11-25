@@ -17,7 +17,8 @@ const TanStackRouterDevtools =
 
 const MainRoute = () => {
   const auth = useAuth();
-  const isLoggedIn = useAuth((s) => s.loggedIn);
+  const isLoggedIn = useAuth((s) => s.isLoggedIn)();
+  const jwt = auth.getJwtPayload();
   function login() {
     auth.startDiscordLogin();
   }
@@ -30,9 +31,11 @@ const MainRoute = () => {
         <Link to="/" className="[&.active]:font-bold">
           Home
         </Link>{" "}
-        <Link to="/admin" className="[&.active]:font-bold">
-          Admin
-        </Link>{" "}
+        {jwt?.role === "admin" && (
+          <Link to="/admin" className="[&.active]:font-bold">
+            Admin
+          </Link>
+        )}
         {/* {Conditional rendering cool stuff} */}
         {isLoggedIn && (
           <Link to="/my-calendar" className="[&.active]:font-bold">
