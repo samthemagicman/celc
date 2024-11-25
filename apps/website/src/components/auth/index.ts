@@ -1,3 +1,4 @@
+import * as jose from "jose";
 import cookie from "js-cookie";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -9,6 +10,10 @@ type AuthStore = {
   logout: () => Promise<void>;
   userInfo: Awaited<ReturnType<typeof trpc.user.getInfo.query>> | null;
   isLoggedIn: () => boolean;
+  getJwtPayload: () => {
+    username: string;
+    role: string;
+  } | null;
 };
 
 export const useAuth = create(
@@ -30,6 +35,18 @@ export const useAuth = create(
       logout: async () => {
         await trpc.user.logout.mutate();
         set({ userInfo: null });
+      },
+      getJwtPayload: () => {
+        const jwt = cookie.get("jwt");
+        if (jwt) {
+          const payload = jose.decodeJwt(jwt);
+          return payload as {
+            username: string;
+            role: string;
+          };
+        } else {
+          return null;
+        }
       },
       isLoggedIn: () => {
         const jwt = cookie.get("jwt");

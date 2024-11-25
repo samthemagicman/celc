@@ -32,6 +32,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      jose:
+        specifier: ^5.9.6
+        version: 5.9.6
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -117,6 +120,16 @@ importers:
       vite:
         specifier: ^5.4.8
         version: 5.4.8(@types/node@22.7.4)
+
+  ../..: {}
+
+  ../../packages/database: {}
+
+  ../../packages/trpc: {}
+
+  ../../packages/types: {}
+
+  ../api: {}
 
 packages:
 
