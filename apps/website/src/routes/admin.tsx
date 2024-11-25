@@ -1,7 +1,8 @@
 import { DatabaseEvent } from "@repo/types/database";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { CalendarCheck, CalendarX } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
+import { useAuth } from "~/components/auth";
 import { Calendar, CalendarEvent } from "~/components/calendar";
 import { Button } from "~/components/ui/button";
 import {
@@ -18,6 +19,12 @@ type Event = DatabaseEvent;
 export const Route = createFileRoute("/admin")({
   component: MainComponent,
   loader: async () => {
+    const auth = useAuth.getState().getJwtPayload();
+    if (!auth || auth.role !== "admin") {
+      throw redirect({
+        to: "/",
+      });
+    }
     const events = await trpc.event.getAllEvents.query();
     return { events };
   },
