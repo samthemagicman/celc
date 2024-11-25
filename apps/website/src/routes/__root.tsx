@@ -17,7 +17,7 @@ const TanStackRouterDevtools =
 
 const MainRoute = () => {
   const auth = useAuth();
-  const isLoggedIn = useAuth((s) => s.loggedIn);
+  const isLoggedIn = useAuth((s) => s.isLoggedIn)();
   function login() {
     auth.startDiscordLogin();
   }

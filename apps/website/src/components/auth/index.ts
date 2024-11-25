@@ -8,12 +8,12 @@ type AuthStore = {
   exchangePkceCode: () => Promise<void>;
   logout: () => Promise<void>;
   userInfo: Awaited<ReturnType<typeof trpc.user.getInfo.query>> | null;
-  loggedIn: boolean;
+  isLoggedIn: () => boolean;
 };
 
 export const useAuth = create(
   persist<AuthStore>(
-    (set) => ({
+    (set, get) => ({
       startDiscordLogin: async () => {
         const { codeVerifier, url } = await trpc.login.discord.query.query();
         cookie.set("code_verifier", codeVerifier, {
@@ -25,13 +25,26 @@ export const useAuth = create(
       exchangePkceCode: async () => {
         await trpc.login.discord.exchangePkceCode.query();
         const userInfo = await trpc.user.getInfo.query().catch(() => null);
-        set({ loggedIn: true, userInfo });
+        set({ userInfo });
       },
       logout: async () => {
         await trpc.user.logout.mutate();
-        set({ loggedIn: false, userInfo: null });
+        set({ userInfo: null });
       },
-      loggedIn: false,
+      isLoggedIn: () => {
+        const jwt = cookie.get("jwt");
+        console.log(cookie.get());
+        if (jwt) {
+          if (get().userInfo === null) {
+            trpc.user.getInfo.query().then((userInfo) => {
+              set({ userInfo });
+            });
+          }
+          return true;
+        } else {
+          return false;
+        }
+      },
       userInfo: null,
     }),
     {

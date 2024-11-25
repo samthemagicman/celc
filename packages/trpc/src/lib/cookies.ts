@@ -7,10 +7,14 @@ export function getCookies(req: Request) {
   return cookie.parse(cookieHeader);
 }
 
-export function deleteCookie(resHeaders: ServerResponse, name: string) {
+export function deleteCookie(
+  resHeaders: ServerResponse,
+  name: string,
+  options?: SerializeOptions,
+) {
   resHeaders.appendHeader(
     "Set-Cookie",
-    cookie.serialize(name, "", { maxAge: -1 }),
+    cookie.serialize(name, "", { maxAge: -1, ...options }),
   );
 }
 
