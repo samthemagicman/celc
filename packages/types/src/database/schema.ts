@@ -19,3 +19,15 @@ export const users = sqliteTable("users", {
     enum: ["admin", "user"],
   }).notNull(),
 });
+
+// Create table for User _ Events
+// A user can have multiple events
+export const userEvents = sqliteTable("user_events", {
+  id: int().primaryKey({ autoIncrement: true }),
+  userId: text()
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }), //That's cool, deletes user here if user gets deleted
+  eventId: int()
+    .notNull()
+    .references(() => event.id, { onDelete: "cascade" }), //ref to event's table
+});
