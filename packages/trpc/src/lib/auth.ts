@@ -83,9 +83,6 @@ export const discordAuth = {
       throw new Error("No username");
     }
 
-    const userRole = await getUserRole(userInfoJson.id);
-    userInfoJson.role = userRole;
-
     return userInfoJson as UserInfo;
   },
   getJwt: async (userData: UserInfo) => {
@@ -182,6 +179,7 @@ export const exchangeOauthCodeAndSetCookies = async (
     userInfo.username,
     userInfo.email,
   );
+  userInfo.role = await getUserRole(userInfo.id);
   const jwt = await discordAuth.getJwt(userInfo);
 
   setAuthCookies(res, {
