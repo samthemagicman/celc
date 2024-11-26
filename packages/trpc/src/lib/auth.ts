@@ -111,12 +111,14 @@ export const discordAuth = {
     );
     return tokenSet;
   },
-  getCodeVerifierAndUrl: async () => {
+  getCodeVerifierAndUrl: async (uri: string | undefined) => {
     const codeVerifier = oidclient.randomPKCECodeVerifier();
     const codeChallenge =
       await oidclient.calculatePKCECodeChallenge(codeVerifier);
     const parameters = {
-      redirect_uri: "http://localhost:5173/auth/callback",
+      redirect_uri: uri
+        ? `${uri}/auth/callback`
+        : "http://localhost:5173/auth/callback",
       scope: "email identify",
       code_challenge: codeChallenge,
       code_challenge_method: "S256",

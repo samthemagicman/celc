@@ -6,7 +6,7 @@ services:
       dockerfile: ./packages/database/dockerfile
     restart: on-failure:3
     volumes:
-      - "/app/db.sqlite:/app/db.sqlite"
+      - "./db.sqlite:/app/db.sqlite"
     environment:
       - NODE_ENV=production
       - DB_LOCATION=file:/app/db.sqlite # Example environment variable
@@ -17,7 +17,7 @@ services:
       dockerfile: ./apps/api/dockerfile
     restart: unless-stopped
     volumes:
-      - "/app/db.sqlite:/app/db.sqlite"
+      - "./db.sqlite:/app/db.sqlite"
     env_file: .env
     expose:
       - 3000
