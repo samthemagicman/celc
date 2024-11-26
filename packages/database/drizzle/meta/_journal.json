@@ -8,6 +8,13 @@
       "when": 1732365678906,
       "tag": "0000_perpetual_white_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1732643737829,
+      "tag": "0001_same_rictor",
+      "breakpoints": true
     }
   ]
 }
