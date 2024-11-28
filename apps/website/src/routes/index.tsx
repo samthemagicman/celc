@@ -1,5 +1,6 @@
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
-import React from "react";
+import { Console } from "console";
+import React, { useEffect } from "react";
 import { Calendar } from "~/components/calendar";
 import { CalendarEventModal } from "~/components/calendar/calendar-event-modal";
 import { trpc } from "~/lib/api";
@@ -21,12 +22,36 @@ function Index() {
     null | (typeof events)[0]
   >(null);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [isEventInUserCalendar, setIsEventInUserCalendar] = React.useState<boolean>(false);
+  
+  async function addEventToCalendar(){
+    if(!clickedEvent)return;
+    await trpc.userEvents.addUserEvent.mutate({ eventId: clickedEvent.id });
+    // Remove the event from the local state
+    // setSavedEvents((prev) => prev.filter((event) => event.id !== clickedEvent.id));
+    setModalOpen(false);
+  }
+
+  async function checkEventInUserCalendar(){
+    if(!clickedEvent)return;
+    // return await trpc.userEvents.isEventInUserCalendar.query({  eventId:clickedEvent.id });
+    const result = await trpc.userEvents.isEventInUserCalendar.query({  eventId:clickedEvent.id });
+    setIsEventInUserCalendar(result)
+    return;
+  }
+
+  useEffect(() => {checkEventInUserCalendar()},[clickedEvent])
+  
   return (
     <div>
       <CalendarEventModal
         event={clickedEvent}
         isOpen={modalOpen}
         onRequestClose={() => setModalOpen(false)}
+        onRemoveEventFromCalendar={() => {}}
+        onAddEventToCalendar={ addEventToCalendar } //this is null cause we won't add event from my-calendar
+        isEventInUserCalendar={ isEventInUserCalendar }
+        source="/"
       />
       <h1 className="text-xl font-bold my-4 text-center">Event Calendar</h1>
       <Calendar

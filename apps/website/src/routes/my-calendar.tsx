@@ -29,6 +29,7 @@ function MyCalendar() {
     null | (typeof events)[0]
   >(null);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [removeOrAddVisibility, setRemoveOrAddUserButton] = React.useState(true);
 
   const events = useMemo(() => {
     if (inPreview) {
@@ -68,17 +69,31 @@ function MyCalendar() {
     setDeletedEvents([]);
   }
 
+  async function removeEventFromCalendar(){
+    if(!clickedEvent) return;
+    await trpc.userEvents.removeEventFromCalendar.mutate({ eventId: clickedEvent.id });
+    // Remove the event from the local state
+    setSavedEvents((prev) => prev.filter((event) => event.id !== clickedEvent.id));
+    setModalOpen(false);
+
+  }
+
   return (
     <div>
       <CalendarEventModal
         event={clickedEvent}
         isOpen={modalOpen}
         onRequestClose={() => setModalOpen(false)}
+        onRemoveEventFromCalendar={() => removeEventFromCalendar()}
+        onAddEventToCalendar={() => {}} //this is null cause we won't add event from my-calendar
+        isEventInUserCalendar={true} // do true = remove; false = add
+        // isEventDefault = {() => {}}
+        source="my-calendar"
       />
       <div className="w-full flex p-3 gap-3 items-center bg-gray-100">
         <h1 className="text-xl font-bold">
           {" "}
-          {inPreview ? "" : "Editing"} Calendar
+          {inPreview ? "" : " "} Calendar
         </h1>
         <div className="flex-1"></div>
         <Button
@@ -92,7 +107,6 @@ function MyCalendar() {
         >
           {inPreview ? "Edit Mode" : "Preview"}
         </Button>
-        {/* <AddEvent onEventAdded={addEventToPreview} /> */}
         <Button onClick={saveEvents}>Save Changes</Button>
       </div>
       <hr />
