@@ -24,30 +24,33 @@ npm install -g pnpm
 ```
 pnpm install
 ```
+
 Then, to run the website + api:
 
-
 Before running the page, we need to create the database
+
 ```
 npm install -g dotenv-cli
 ```
 
 pnpm run db:push
-``` 
+
+```
 Getting all db stuff
 pnpm --filter @repo/database install
 pnpm --filter @repo/trpc --filter website --filter api --filter @repo/types install
 ```
+
 npm install -g dotenv
+
 ```
 pnpm run dev
 ```
 
 You can modify your code and hot reload will reload the website for you.
 
-
 To run db
 pnpm run db:studio
 
 run webapp
-pnpm run dev  
+pnpm run dev

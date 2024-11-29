@@ -150,3 +150,6 @@ INSERT INTO event (title, description, location, startHour, endHour, day, backgr
 -- Day 6 (Tuesday, Jan 7)
 INSERT INTO event (title, description, location, startHour, endHour, day, backgroundColor) VALUES
 ('Departures', NULL, NULL, 7.5, 8.5, 6, '#4f4f4f');
+
+-- -- Default Event --
+-- INSERT INTO default_events
