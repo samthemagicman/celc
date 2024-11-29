@@ -64,7 +64,7 @@ function Index() {
         isOpen={modalOpen}
         onRequestClose={() => setModalOpen(false)}
         onRemoveEventFromCalendar={removeEventFromCalendar}
-        onAddEventToCalendar={addEventToCalendar} //this is null cause we won't add event from my-calendar
+        onAddEventToCalendar={addEventToCalendar}
         showAddButton={!isEventInUserCalendar}
         showRemoveButton={isEventInUserCalendar}
       />
