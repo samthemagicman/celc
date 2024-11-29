@@ -29,7 +29,6 @@ function MyCalendar() {
     null | (typeof events)[0]
   >(null);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [removeOrAddVisibility, setRemoveOrAddUserButton] = React.useState(true);
 
   const events = useMemo(() => {
     if (inPreview) {
@@ -69,13 +68,16 @@ function MyCalendar() {
     setDeletedEvents([]);
   }
 
-  async function removeEventFromCalendar(){
-    if(!clickedEvent) return;
-    await trpc.userEvents.removeEventFromCalendar.mutate({ eventId: clickedEvent.id });
+  async function removeEventFromCalendar() {
+    if (!clickedEvent) return;
+    await trpc.userEvents.removeEventFromCalendar.mutate({
+      eventId: clickedEvent.id,
+    });
     // Remove the event from the local state
-    setSavedEvents((prev) => prev.filter((event) => event.id !== clickedEvent.id));
+    setSavedEvents((prev) =>
+      prev.filter((event) => event.id !== clickedEvent.id),
+    );
     setModalOpen(false);
-
   }
 
   return (
@@ -91,10 +93,7 @@ function MyCalendar() {
         source="my-calendar"
       />
       <div className="w-full flex p-3 gap-3 items-center bg-gray-100">
-        <h1 className="text-xl font-bold">
-          {" "}
-          {inPreview ? "" : " "} Calendar
-        </h1>
+        <h1 className="text-xl font-bold"> {inPreview ? "" : " "} Calendar</h1>
         <div className="flex-1"></div>
         <Button
           variant="secondary"
