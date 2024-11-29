@@ -1,4 +1,4 @@
-import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { int, real, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 
 export const event = sqliteTable("event", {
   id: int().primaryKey({ autoIncrement: true }),
@@ -22,12 +22,18 @@ export const users = sqliteTable("users", {
 
 // Create table for User _ Events
 // A user can have multiple events
-export const userEvents = sqliteTable("user_events", {
-  id: int().primaryKey({ autoIncrement: true }),
-  userId: text()
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }), //That's cool, deletes user here if user gets deleted
-  eventId: int()
-    .notNull()
-    .references(() => event.id, { onDelete: "cascade" }), //ref to event's table
-});
+export const userEvents = sqliteTable(
+  "user_events",
+  {
+    id: int().primaryKey({ autoIncrement: true }),
+    userId: text()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }), //That's cool, deletes user here if user gets deleted
+    eventId: int()
+      .notNull()
+      .references(() => event.id, { onDelete: "cascade" }), //ref to event's table
+  },
+  (t) => ({
+    unique: unique().on(t.userId, t.eventId),
+  }),
+);
