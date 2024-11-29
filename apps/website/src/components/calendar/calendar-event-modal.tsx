@@ -17,8 +17,8 @@ type CalendarEventModalProps = {
   onRequestClose: () => void;
   onRemoveEventFromCalendar: () => void;
   onAddEventToCalendar: () => void;
-  isEventInUserCalendar: boolean;
-  source: "/" | "my-calendar";
+  showRemoveButton?: boolean;
+  showAddButton?: boolean;
 };
 
 export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
@@ -27,8 +27,8 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
   onRequestClose,
   onRemoveEventFromCalendar,
   onAddEventToCalendar,
-  isEventInUserCalendar,
-  source,
+  showAddButton,
+  showRemoveButton,
 }) => {
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
@@ -47,13 +47,26 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
           <p>{event?.description}</p>
         </ModalBody>
         <ModalFooter>
-          {source === "/" && !isEventInUserCalendar && (
-            <Button onClick={onAddEventToCalendar}>Add To Calendar</Button>
-          )}
-          {source === "my-calendar" && (
-            <Button onClick={onRemoveEventFromCalendar}>Remove</Button>
-          )}
-          <Button onClick={onRequestClose}>Close</Button>
+          <div className="flex gap-3 justify-end">
+            {showAddButton && (
+              <Button onClick={onAddEventToCalendar}>
+                Add To Your Calendar
+              </Button>
+            )}
+            {showRemoveButton && (
+              <Button onClick={onRemoveEventFromCalendar}>
+                Remove From Your Calendar
+              </Button>
+            )}
+            <Button
+              onClick={onRequestClose}
+              variant={
+                showRemoveButton || showAddButton ? "secondary" : "default"
+              }
+            >
+              Close
+            </Button>
+          </div>
         </ModalFooter>
       </ModalContent>
     </Modal>

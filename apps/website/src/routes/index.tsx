@@ -27,19 +27,30 @@ function Index() {
   async function addEventToCalendar() {
     if (!clickedEvent) return;
     await trpc.userEvents.addUserEvent.mutate({ eventId: clickedEvent.id });
-    // Remove the event from the local state
-    // setSavedEvents((prev) => prev.filter((event) => event.id !== clickedEvent.id));
+    setIsEventInUserCalendar(true);
+    setModalOpen(false);
+  }
+
+  async function removeEventFromCalendar() {
+    if (!clickedEvent) return;
+    await trpc.userEvents.removeEventFromCalendar.mutate({
+      eventId: clickedEvent.id,
+    });
+    setIsEventInUserCalendar(false);
     setModalOpen(false);
   }
 
   async function checkEventInUserCalendar() {
     if (!clickedEvent) return;
-    // return await trpc.userEvents.isEventInUserCalendar.query({  eventId:clickedEvent.id });
-    const result = await trpc.userEvents.isEventInUserCalendar.query({
-      eventId: clickedEvent.id,
-    });
-    setIsEventInUserCalendar(result);
-    return;
+    trpc.userEvents.isEventInUserCalendar
+      .query({
+        eventId: clickedEvent.id,
+      })
+      .then(setIsEventInUserCalendar)
+      .catch(() => {
+        console.log("Error checking event in user calendar");
+        setIsEventInUserCalendar(false);
+      });
   }
 
   useEffect(() => {
@@ -52,10 +63,10 @@ function Index() {
         event={clickedEvent}
         isOpen={modalOpen}
         onRequestClose={() => setModalOpen(false)}
-        onRemoveEventFromCalendar={() => {}}
+        onRemoveEventFromCalendar={removeEventFromCalendar}
         onAddEventToCalendar={addEventToCalendar} //this is null cause we won't add event from my-calendar
-        isEventInUserCalendar={isEventInUserCalendar}
-        source="/"
+        showAddButton={!isEventInUserCalendar}
+        showRemoveButton={isEventInUserCalendar}
       />
       <h1 className="text-xl font-bold my-4 text-center">Event Calendar</h1>
       <Calendar

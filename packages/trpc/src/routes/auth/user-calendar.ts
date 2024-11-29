@@ -1,12 +1,6 @@
-import { db, eq, and, schema } from "@repo/database";
-// import { and } from 'drizzle-orm';
-import { authProcedure, router } from "../../trpc";
+import { and, db, eq, schema } from "@repo/database";
 import { z } from "zod";
-
-// const DeleteUserEventInput = z.object({
-//   id: z.custom<NonNullable<EventInsert["id"]>>(),
-// });
-// const DeleteUserEventInput = z.object
+import { authProcedure, router } from "../../trpc";
 
 export const UserCalendarRouter = router({
   getPersonalCalendar: authProcedure.query(async ({ ctx }) => {
