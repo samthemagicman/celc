@@ -1,15 +1,15 @@
 DELETE FROM event;
 
 -- Day 0 (Wednesday, Jan 1)
-INSERT INTO event (title, description, location, startHour, endHour, day, backgroundColor) VALUES
-('Arrivals', NULL, NULL, 7.5, 15.0, 0, '#536b8f'),
-('Registration', 'Registration at Delta Hotel', 'Delta Hotel', 15.0, 17.0, 0, '#536b8f'),
-('Transportation to UNB', NULL, NULL, 17.0, 18.0, 0, '#536b8f'),
-('Head Delegate Meeting', NULL, NULL, 18.0, 18.5, 0, '#d93a3a'),
-('Dinner', NULL, NULL, 18.5, 19.5, 0, '#649964'),
-('Welcome Sessions', NULL, NULL, 19.5, 20.0, 0, '#bd68bd'),
-('Evening Event', NULL, NULL, 20, 22.0, 0, '#ffb443'),
-('Transportation to Hotel', NULL, NULL, 22.0, 23, 0, '#4f4f4f');
+INSERT INTO event (title, description, location, startHour, endHour, day, backgroundColor, eventType) VALUES
+('Arrivals', NULL, NULL, 7.5, 15.0, 0, '#74B3FB', 'default'),
+('Registration', NULL, 'Delta Hotel', 15.0, 17.0, 0, '#74B3FB', 'default'),
+('Transportation to UNB', NULL, NULL, 17.0, 18.0, 0, '#FFFFFF', 'default'),
+('Head Delegate Meeting', NULL, NULL, 18.0, 18.75, 0, '#FFFFFF', 'default'),
+('Dinner', NULL, NULL, 18.75, 19.5, 0, '#74B3FB', 'default'),
+('Welcome Sessions', NULL, NULL, 19.5, 20.25, 0, '#FFFFFF', 'default'),
+('Evening Event', NULL, NULL, 20.25, 22.0, 0, '#C3326C', 'default'),
+('Transportation to Hotel', NULL, NULL, 22.0, 23.0, 0, '#FFFFFF', 'default');
 
 -- Day 1 (Thursday, Jan 2)
 INSERT INTO event (title, description, location, startHour, endHour, day, backgroundColor) VALUES
@@ -149,7 +149,7 @@ INSERT INTO event (title, description, location, startHour, endHour, day, backgr
 
 -- Day 6 (Tuesday, Jan 7)
 INSERT INTO event (title, description, location, startHour, endHour, day, backgroundColor) VALUES
-('Departures', NULL, NULL, 7.5, 8.5, 6, '#4f4f4f');
+('Departures', NULL, NULL, 7.5, 24, 6, '#4f4f4f');
 
 -- -- Default Event --
 -- INSERT INTO default_events

@@ -153,6 +153,7 @@ const AddEvent: React.FC<AddEventProps> = ({ onEventAdded }) => {
   const [endTime, setEndTime] = useState("8:30 A.M.");
   const [location, setLocation] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#FF4E13"); // Default color
+  const [eventType, setEventType] = useState("");
   //#FF4E13
   //Availble Day Options
   const dayOptions = [
@@ -294,6 +295,7 @@ const AddEvent: React.FC<AddEventProps> = ({ onEventAdded }) => {
         startHour: calculateRealTime(startTime),
         id: 0,
         title,
+        eventType,
       });
 
       //Reset

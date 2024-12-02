@@ -22,19 +22,18 @@ export const verifyOrCreateUserInDatabase = async (
       })
       .execute();
 
-    //On Creation of a User, we inser first calendar event as default test
-    const firstEvent = await db
+    //On Creation of a User, we insert all calendar event which is default
+    const defaultEvents = await db
       .select()
       .from(schema.event)
-      .limit(1)
-      .then((res) => res[0]);
+      .where(eq(schema.event.eventType, "default"));
 
-    await db
-      .insert(schema.userEvents)
-      .values({
-        userId: discordId,
-        eventId: firstEvent.id, //No events was created user
-      })
-      .execute();
+    const userEventInserts = defaultEvents.map((event) => ({
+      userId: discordId,
+      eventId: event.id,
+    }));
+
+    //Insert all default events
+    await db.insert(schema.userEvents).values(userEventInserts).execute();
   }
 };
