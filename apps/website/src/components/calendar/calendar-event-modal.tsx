@@ -9,8 +9,11 @@ import {
   ModalTitle,
 } from "../ui/modal";
 import { numberToTime } from "./calendar-column";
+import { useAuth } from "~/components/auth";
+
 
 type CalendarEventModalProps = {
+  
   event: DatabaseEvent | null;
   isOpen: boolean;
   onRequestClose: () => void;
@@ -29,6 +32,7 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
   showAddButton,
   showRemoveButton,
 }) => {
+  const isLoggedIn = useAuth((s) => s.isLoggedIn)();
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
       <ModalContent>
@@ -47,12 +51,12 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
         </ModalBody>
         <ModalFooter>
           <div className="flex gap-3 justify-end">
-            {showAddButton && (
+            {showAddButton && isLoggedIn && (
               <Button onClick={onAddEventToCalendar}>
                 Add To Your Calendar
               </Button>
             )}
-            {showRemoveButton && (
+            {showRemoveButton && isLoggedIn && (
               <Button onClick={onRemoveEventFromCalendar}>
                 Remove From Your Calendar
               </Button>
