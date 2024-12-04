@@ -253,6 +253,13 @@ type EventColumnContainerContextType = {
 const EventColumnContainerContext =
   React.createContext<EventColumnContainerContextType | null>(null);
 
+const getTextColor = (bgColor: string | undefined) => {
+  if (!bgColor) return 'white'; // Default to white
+  if( bgColor.toLowerCase() === '#222222') return 'white'
+  return bgColor.toLowerCase() === '#000000' || bgColor.toLowerCase() === 'black' ? 'white' : 'black';
+};
+
+
 export const CalendarEvent: React.FC<{
   startHour: number;
   endHour: number;
@@ -292,9 +299,11 @@ export const CalendarEvent: React.FC<{
     }
   }, [contentBtn]);
 
+  const textColor = getTextColor(backgroundColor); 
+  
   return (
     <button
-      className={cn(
+    className={cn(
         "w-full z-30 select-none cursor-pointer p-px active:opacity-90",
         !calendarRow && "absolute",
         className,
@@ -321,8 +330,9 @@ export const CalendarEvent: React.FC<{
         <div className="px-2 py-1 flex flex-col">
           <div
             className={cn(
-              "text-white text-start tracking-wider text-xs xs:text-sm sm:text-base font-semibold text-ellipsis break-all line-clamp-none lg:line-clamp-1",
+              "text-start tracking-wider text-xs xs:text-sm sm:text-base font-semibold text-ellipsis break-all line-clamp-none lg:line-clamp-1",
             )}
+            style={{ color: textColor }}
           >
             {title}
           </div>
@@ -334,8 +344,12 @@ export const CalendarEvent: React.FC<{
             )}
           >
             <div className="hidden flex-row items-center gap-1 xs:flex">
-              <ClockIcon className="w-[1em] h-[1em] text-white hidden sm:block" />
-              <p className="flex-1 text-white text-xs sm:text-sm">
+              <ClockIcon className="w-[1em] h-[1em] hidden sm:block" 
+              style={{ color: textColor }}
+              />
+              <p className={cn("flex-1 text-xs sm:text-sm")}
+                style={{ color: textColor }}
+              >
                 {numberToTime(startHour, true)} - {numberToTime(endHour, true)}
               </p>
             </div>
