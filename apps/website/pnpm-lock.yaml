@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@kodingdotninja/use-tailwind-breakpoint':
+        specifier: ^1.0.0
+        version: 1.0.0(react@18.3.1)(tailwindcss@3.4.13)
       '@radix-ui/react-icons':
         specifier: ^1.3.0
         version: 1.3.0(react@18.3.1)
@@ -598,6 +601,17 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
+  '@kodingdotninja/use-tailwind-breakpoint@1.0.0':
+    resolution: {integrity: sha512-UVN3Au5qBg7H7tkLxInvbozpigout08AWj6wQORtvAO/F67Gb3sAayuOgppHZTjMuQPAUbVL+TWMLwivuIxWtw==}
+    peerDependencies:
+      react: '>=16.8'
+      tailwindcss: '*'
+    peerDependenciesMeta:
+      react:
+        optional: true
+      tailwindcss:
+        optional: true
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2165,6 +2179,11 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@kodingdotninja/use-tailwind-breakpoint@1.0.0(react@18.3.1)(tailwindcss@3.4.13)':
+    optionalDependencies:
+      react: 18.3.1
+      tailwindcss: 3.4.13
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
