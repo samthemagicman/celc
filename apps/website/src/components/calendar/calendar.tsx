@@ -94,7 +94,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 <CalendarColumn
                   renderEvent={renderEvent}
                   onEventClick={onEventClick}
-                  startHour={7.5}
+                  startHour={7}
                   endHour={24}
                   events={events}
                 />
