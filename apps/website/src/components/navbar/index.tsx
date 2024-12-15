@@ -9,8 +9,8 @@ import { Button } from "../ui/button";
 
 const navbarLinks = [
   { to: "/", label: "Events" },
+  { to: "/my-calendar", label: "My Calendar", authOnly: true },
   { to: "/admin", label: "Admin", role: "admin" },
-  { to: "/my-calendar", label: "My Calendar", role: "user" },
 ];
 
 const HamburgerButton: React.FC<{ onClick: () => void; active?: boolean }> = ({
@@ -79,6 +79,9 @@ export const MobileNavMenu: React.FC<{ onButtonClicked: () => void }> = ({
         if (link.role && link.role !== jwt?.role) {
           return null;
         }
+        if (link.authOnly && !isLoggedIn) {
+          return null;
+        }
         return (
           <NavbarLink key={link.to} to={link.to} onClick={onButtonClicked}>
             {link.label}
@@ -126,6 +129,9 @@ export const Navbar: React.FC = () => {
           <div className="flex text-white items-center gap-8 pl-4 flex-1 justify-center md:justify-start">
             {navbarLinks.map((link) => {
               if (link.role && link.role !== jwt?.role) {
+                return null;
+              }
+              if (link.authOnly && !isLoggedIn) {
                 return null;
               }
               return (
