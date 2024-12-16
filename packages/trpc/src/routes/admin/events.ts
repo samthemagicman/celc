@@ -12,12 +12,12 @@ const DeleteEventInput = z.object({
 const UpdateEventInput = z.object({
   id: z.custom<NonNullable<EventInsert["id"]>>(),
   title: z.string().optional(),
-  description: z.string().optional(),
+  description: z.string().optional().nullable(),
   day: z.number().optional(),
   startHour: z.number().optional(),
   endHour: z.number().optional(),
-  location: z.string().optional(),
-  backgroundColor: z.string().optional(),
+  location: z.string().optional().nullable(),
+  backgroundColor: z.string().optional().nullable(),
   //this is for custom color
 });
 

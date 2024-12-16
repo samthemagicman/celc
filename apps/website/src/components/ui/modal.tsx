@@ -9,7 +9,7 @@ const ModalContext = React.createContext<{
   onRequestClose?: () => void;
 }>({ isOpen: false });
 
-type ModalProps = {
+export type ModalProps = {
   isOpen: boolean;
   children: React.ReactNode;
   onRequestClose?: () => void;

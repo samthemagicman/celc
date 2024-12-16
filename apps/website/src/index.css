@@ -28,6 +28,14 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --calendar-background-1: #ff4e13;
+    --calendar-background-2: #ff9a31;
+    --calendar-background-3: #ffde59;
+    --calendar-background-4: #0047a3;
+    --calendar-background-5: #74b3fb;
+    --calendar-background-6: #c3326c;
+    --calendar-background-7: #222222;
+    --calendar-background-8: #ededed;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -54,6 +62,14 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --calendar-background-1: 0 0% 3.9%;
+    --calendar-background-2: 0 0% 7.8%;
+    --calendar-background-3: 0 0% 11.8%;
+    --calendar-background-4: 0 0% 15.7%;
+    --calendar-background-5: 0 0% 19.6%;
+    --calendar-background-6: 0 0% 23.5%;
+    --calendar-background-7: 0 0% 27.5%;
+    --calendar-background-8: 0 0% 31.4%;
   }
 }
 @layer base {

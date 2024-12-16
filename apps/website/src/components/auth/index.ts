@@ -50,7 +50,6 @@ export const useAuth = create(
       },
       isLoggedIn: () => {
         const jwt = cookie.get("jwt");
-        console.log(cookie.get());
         if (jwt) {
           if (get().userInfo === null) {
             trpc.user.getInfo.query().then((userInfo) => {
