@@ -82,10 +82,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     mainContent = (
       <div className="flex flex-row">
         <CalendarTimes startHour={7.5} endHour={24} className="mt-[1.5rem]" />
-        <DraggableDiv
-          scrollYRoot
-          className="flex-row overflow-x-auto flex gap-12"
-        >
+        <div className="flex gap-12">
           {
             // render all events separated by day
             eventsSeparatedByDay.map((events, i) => (
@@ -101,12 +98,12 @@ export const Calendar: React.FC<CalendarProps> = ({
               </div>
             ))
           }
-        </DraggableDiv>
+        </div>
       </div>
     );
   }
 
-  return (
+  const c = (
     <div>
       <div className="w-full mb-8 text-center px-1">
         <DaySelector
@@ -118,4 +115,20 @@ export const Calendar: React.FC<CalendarProps> = ({
       {mainContent}
     </div>
   );
+
+  if (width < 1024) {
+    return c;
+  } else {
+    return (
+      <DraggableDiv
+        // scrollYRoot
+        className="flex-row overflow-x-auto flex gap-12"
+        style={{
+          height: "calc(100vh - 126px)",
+        }}
+      >
+        {c}
+      </DraggableDiv>
+    );
+  }
 };

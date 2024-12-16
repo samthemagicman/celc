@@ -1,15 +1,17 @@
-import { useRef, useState } from "react";
+import { MouseEvent, useRef, useState } from "react";
+import { cn } from "~/lib/utils";
 
 export const DraggableDiv = ({
   className = "",
   children,
-  scrollYRoot = false,
+  style,
 }: {
   className?: string;
   children: React.ReactNode;
-  scrollYRoot?: boolean;
+  style?: React.CSSProperties;
 }) => {
   const ourRef = useRef<HTMLDivElement>(null);
+  const innerDiv = useRef<HTMLDivElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const mouseCoords = useRef({
     startX: 0,
@@ -17,6 +19,16 @@ export const DraggableDiv = ({
     scrollLeft: 0,
     scrollTop: 0,
   });
+
+  const enableInnerDivEvents = () => {
+    if (!innerDiv.current) return;
+    innerDiv.current.style.pointerEvents = "auto";
+  };
+  const disableInnerDivEvents = () => {
+    if (!innerDiv.current) return;
+    innerDiv.current.style.pointerEvents = "none";
+  };
+
   const handleDragStart: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if (!ourRef.current) return;
     const slider = ourRef.current;
@@ -28,8 +40,10 @@ export const DraggableDiv = ({
     setIsMouseDown(true);
     document.body.style.cursor = "grabbing";
   };
-  const handleDragEnd = () => {
+  const handleDragEnd = (e: MouseEvent<HTMLDivElement>) => {
+    enableInnerDivEvents();
     setIsMouseDown(false);
+    e.preventDefault();
     if (!ourRef.current) return;
     document.body.style.cursor = "default";
   };
@@ -42,21 +56,25 @@ export const DraggableDiv = ({
     const walkX = x - mouseCoords.current.startX;
     const walkY = y - mouseCoords.current.startY;
     slider.scrollLeft = mouseCoords.current.scrollLeft - walkX;
-    slider.scrollTop =
-      mouseCoords.current.scrollTop - (scrollYRoot ? 0 : walkY);
-    window.scrollBy(0, scrollYRoot ? -walkY : 0);
+    slider.scrollTop = mouseCoords.current.scrollTop - walkY;
+    // slider.scrollTop =
+    //   mouseCoords.current.scrollTop - (scrollYRoot ? 0 : walkY);
+    // window.scrollBy(0, scrollYRoot ? -walkY : 0);
+    disableInnerDivEvents();
+    // setTimeout(enableInnerDivEvents, 100);
   };
 
   return (
     <div
+      style={style}
       role="presentation"
       ref={ourRef}
       onMouseDown={handleDragStart}
       onMouseUp={handleDragEnd}
       onMouseMove={handleDrag}
-      className={className}
+      className={cn(className, "")}
     >
-      {children}
+      <div ref={innerDiv}>{children}</div>
     </div>
   );
 };
