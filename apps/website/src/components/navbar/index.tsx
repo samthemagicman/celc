@@ -74,7 +74,7 @@ export const MobileNavMenu: React.FC<{ onButtonClicked: () => void }> = ({
     auth.logout();
   }
   return createPortal(
-    <div className="fixed inset-0 bg-[#ffdd65] text-[#c4326d] z-40 flex items-center justify-center flex-col gap-8 text-4xl font-semibold">
+    <div className="animate-fade fixed inset-0 bg-[#ffdd65] text-[#c4326d] z-40 flex items-center justify-center flex-col gap-8 text-4xl font-semibold">
       {navbarLinks.map((link) => {
         if (link.role && link.role !== jwt?.role) {
           return null;
