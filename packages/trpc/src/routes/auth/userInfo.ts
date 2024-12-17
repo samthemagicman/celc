@@ -1,5 +1,5 @@
 import { logout } from "../../lib/auth";
-import { authProcedure, publicProcedure, router } from "../../trpc";
+import { publicProcedure, router } from "../../trpc";
 
 export const userRouter = router({
   getInfo: publicProcedure.query(async ({ ctx }) => {
@@ -8,7 +8,7 @@ export const userRouter = router({
     }
     return ctx.userInfo;
   }),
-  logout: authProcedure.mutation(async ({ ctx }) => {
+  logout: publicProcedure.mutation(async ({ ctx }) => {
     await logout(ctx.res!);
   }),
 });
