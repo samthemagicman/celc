@@ -1,6 +1,8 @@
 import { DatabaseEvent } from "@repo/types/database";
 import { CalendarCheck, CalendarX } from "lucide-react";
 import React, { useState } from "react";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "~/../tailwind.config";
 import { Button } from "~/components/ui/button";
 import {
   Modal,
@@ -10,7 +12,9 @@ import {
   ModalTitle,
 } from "~/components/ui/modal";
 import { cn } from "~/lib/utils";
+const config = resolveConfig(tailwindConfig);
 
+const colorOptions = Object.values(config.theme.colors.calendarBackground);
 const dayOptions = [
   { day: 0, label: "Day 1 - Wednesday" },
   { day: 1, label: "Day 2 - Thursday" },
@@ -21,21 +25,7 @@ const dayOptions = [
   { day: 6, label: "Day 7 - Tuesday" },
 ];
 
-//Available Time Options
 const timeOptions = getTimeOptions(7, 24, 0.25);
-//Available Colors
-//Include Names of the colors
-//And do bckground text thing
-const colorOptions = [
-  "#FF4E13",
-  "#FF9A31",
-  "#FFDE59",
-  "#0047A3",
-  "#74B3FB",
-  "#C3326C",
-  "#222222",
-  "#EDEDED",
-];
 
 function getTimeOptions(from: number, to: number, interval: number) {
   const options = [];
@@ -193,7 +183,6 @@ export const EditEventModal: React.FC<EditEventProps> = ({
                   name="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  required
                   className="p-2 border border-gray-300 rounded w-full max-h-52"
                 />
               </div>
@@ -262,7 +251,6 @@ export const EditEventModal: React.FC<EditEventProps> = ({
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  required
                   className="p-2 border border-gray-300 rounded w-full"
                 />
               </div>

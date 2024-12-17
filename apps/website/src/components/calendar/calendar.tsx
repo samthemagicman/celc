@@ -86,7 +86,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           {
             // render all events separated by day
             eventsSeparatedByDay.map((events, i) => (
-              <div key={days[i]} className="flex-1 min-w-[40rem]">
+              <div key={days[i]} className="flex-1 min-w-[50rem]">
                 <p className="text-center font-bold">{days[i]}</p>
                 <CalendarColumn
                   renderEvent={renderEvent}

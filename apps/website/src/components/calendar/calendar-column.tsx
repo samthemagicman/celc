@@ -292,6 +292,10 @@ export const CalendarEvent: React.FC<{
     }
   }, [contentBtn]);
 
+  const textColor = backgroundColor
+    ? backgroundColor.replace("--", "--on-")
+    : "white";
+
   return (
     <button
       className={cn(
@@ -321,29 +325,52 @@ export const CalendarEvent: React.FC<{
         <div className="px-2 py-1 flex flex-col">
           <div
             className={cn(
-              "text-white text-start tracking-wider text-xs xs:text-sm sm:text-base font-semibold text-ellipsis break-all line-clamp-none lg:line-clamp-1",
+              "text-start tracking-wider text-xs xs:text-sm sm:text-sm font-semibold text-ellipsis break-all line-clamp-3",
             )}
+            style={{
+              color: textColor,
+            }}
           >
             {title}
           </div>
           {/* Hide if height is too small */}
-          <div
-            className={cn(
-              "flex flex-col gap-1 text-start",
-              divHeight && divHeight < 40 && "hidden",
-            )}
-          >
-            <div className="hidden flex-row items-center gap-1 xs:flex">
-              <ClockIcon className="w-[1em] h-[1em] text-white hidden sm:block" />
-              <p className="flex-1 text-white text-xs sm:text-sm">
-                {numberToTime(startHour, true)} - {numberToTime(endHour, true)}
-              </p>
-            </div>
-
-            {location && (
+          <div className={cn("flex flex-col gap-1 text-start")}>
+            {divHeight && divHeight > 65 && (
               <div className="hidden flex-row items-center gap-1 xs:flex">
-                <PaperPlaneIcon className="w-4 h-4 text-white hidden sm:block" />
-                <p className="text-white text-xs sm:text-sm">{location}</p>
+                <ClockIcon
+                  style={{
+                    color: textColor,
+                  }}
+                  className="w-[1em] h-[1em] hidden sm:block"
+                />
+                <p
+                  style={{
+                    color: textColor,
+                  }}
+                  className="flex-1 text-xs md:text-sm"
+                >
+                  {numberToTime(startHour, true)} -{" "}
+                  {numberToTime(endHour, true)}
+                </p>
+              </div>
+            )}
+
+            {divHeight && divHeight > 128 && location && (
+              <div className="hidden flex-row items-center gap-1 xs:flex">
+                <PaperPlaneIcon
+                  style={{
+                    color: textColor,
+                  }}
+                  className="w-4 h-4 hidden sm:block"
+                />
+                <p
+                  style={{
+                    color: textColor,
+                  }}
+                  className="text-xs sm:text-sm"
+                >
+                  {location}
+                </p>
               </div>
             )}
           </div>

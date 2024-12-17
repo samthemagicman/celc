@@ -13,7 +13,6 @@ import {
 } from "~/components/ui/modal";
 import { cn } from "~/lib/utils";
 const config = resolveConfig(tailwindConfig);
-console.log(config.theme.colors.calendarBackground);
 type Event = DatabaseEvent;
 
 type AddEventProps = {
@@ -183,7 +182,6 @@ export const AddEventModal: React.FC<AddEventProps> = ({
                   name="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  required
                   className="p-2 border border-gray-300 rounded w-full max-h-52"
                 />
               </div>
@@ -252,13 +250,12 @@ export const AddEventModal: React.FC<AddEventProps> = ({
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  required
                   className="p-2 border border-gray-300 rounded w-full"
                 />
               </div>
               <label>
                 Background Color:
-                <div className="flex space-x-2 mt-2 items-stretch">
+                <div className="flex space-x-2 mt-2 items-stretch" about="test">
                   {colorOptions.map((color) => (
                     <button
                       type="button"
