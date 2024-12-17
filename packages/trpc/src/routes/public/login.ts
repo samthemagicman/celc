@@ -1,4 +1,4 @@
-import { ArcticFetchError, OAuth2RequestError, generateState } from "arctic";
+import { generateState } from "arctic";
 import { z } from "zod";
 import { discord, storeJwt } from "../../lib/auth";
 import { getCookie, setCookie } from "../../lib/cookies";
@@ -54,14 +54,7 @@ const discordLoginRouter = router({
           res: ctx.res,
         });
       } catch (e) {
-        if (e instanceof OAuth2RequestError) {
-          const code = e.code;
-          console.log(code);
-        }
-        if (e instanceof ArcticFetchError) {
-          const cause = e.cause;
-          console.log(cause);
-        }
+        console.log(e);
       }
     }),
   query: publicProcedure.query(async ({ ctx }) => {
