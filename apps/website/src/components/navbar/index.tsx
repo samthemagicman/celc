@@ -2,8 +2,8 @@ import { Cross1Icon, HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import React from "react";
 import { createPortal } from "react-dom";
-import { useAuth } from "~/components/auth";
 import { useBreakpoint } from "~/hooks/tailwind";
+import { useAuth } from "~/hooks/use-auth";
 import { cn } from "~/lib/utils";
 import { Button } from "../ui/button";
 
@@ -65,8 +65,8 @@ export const MobileNavMenu: React.FC<{ onButtonClicked: () => void }> = ({
   onButtonClicked,
 }) => {
   const auth = useAuth();
-  const jwt = auth.getJwtPayload();
-  const isLoggedIn = useAuth((s) => s.isLoggedIn)();
+  const userInfo = auth.userInfo;
+  const isLoggedIn = useAuth((s) => s.isLoggedIn);
   function login() {
     auth.startDiscordLogin();
   }
@@ -76,7 +76,7 @@ export const MobileNavMenu: React.FC<{ onButtonClicked: () => void }> = ({
   return createPortal(
     <div className="animate-fade fixed inset-0 bg-[#ffdd65] text-[#c4326d] z-40 flex items-center justify-center flex-col gap-8 text-4xl font-semibold">
       {navbarLinks.map((link) => {
-        if (link.role && link.role !== jwt?.role) {
+        if (link.role && link.role !== userInfo?.role) {
           return null;
         }
         if (link.authOnly && !isLoggedIn) {
@@ -110,10 +110,10 @@ export const MobileNavMenu: React.FC<{ onButtonClicked: () => void }> = ({
 
 export const Navbar: React.FC = () => {
   const auth = useAuth();
-  const jwt = auth.getJwtPayload();
+  const userInfo = auth.userInfo;
   const isMobile = !useBreakpoint("sm");
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const isLoggedIn = useAuth((s) => s.isLoggedIn)();
+  const isLoggedIn = useAuth((s) => s.isLoggedIn);
   function login() {
     auth.startDiscordLogin();
   }
@@ -128,7 +128,7 @@ export const Navbar: React.FC = () => {
         {!isMobile && (
           <div className="flex text-white items-center gap-8 pl-4 flex-1 justify-center md:justify-start">
             {navbarLinks.map((link) => {
-              if (link.role && link.role !== jwt?.role) {
+              if (link.role && link.role !== userInfo?.role) {
                 return null;
               }
               if (link.authOnly && !isLoggedIn) {

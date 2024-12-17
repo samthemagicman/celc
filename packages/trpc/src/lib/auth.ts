@@ -1,234 +1,113 @@
-import { db, eq, schema } from "@repo/database";
 import { IncomingMessage, ServerResponse } from "http";
 import jwt from "jsonwebtoken";
-import * as oidclient from "openid-client";
 import { deleteCookie, getCookie, setCookie } from "./cookies";
 import { verifyOrCreateUserInDatabase } from "./user";
+const isProduction = process.env.NODE_ENV === "production";
+
+import { Discord } from "arctic";
 
 if (!process.env.DISCORD_CLIENT_ID) {
   throw new Error("No DISCORD_CLIENT_ID");
+}
+if (!process.env.DISCORD_CLIENT_SECRET) {
+  throw new Error("No DISCORD_CLIENT_SECRET");
 }
 if (!process.env.AUTH_SIGNING_KEY) {
   throw new Error("No AUTH_SIGNING_KEY");
 }
 
-type UserInfo = {
+const signingKey = process.env.AUTH_SIGNING_KEY;
+
+export type UserProfile = {
   role: string;
   id: string;
   username: string;
   email: string;
 };
 
-const CookieNames = {
-  AccessToken: "access_token",
-  CodeVerifier: "code_verifier",
-  JsonWebToken: "jwt",
-  RefreshToken: "refresh_token",
-  AccessTokenExpiration: "access_token_expiration",
-} as const;
-
-const discordOauthConfig = new oidclient.Configuration(
-  {
-    issuer: "https://discord.com",
-    revocation_endpoint: "https://discord.com/api/oauth2/token/revoke",
-    userinfo_endpoint: "https://discord.com/api/users/@me",
-    token_endpoint: "https://discord.com/api/oauth2/token",
-    authorization_endpoint: "https://discord.com/api/oauth2/authorize",
-    scopes_supported: ["email", "identify"],
-  },
+export const discord = new Discord(
   process.env.DISCORD_CLIENT_ID,
+  process.env.DISCORD_CLIENT_SECRET,
+  process.env.DISCORD_REDIRECT_URI ?? "http://localhost:5173/auth/callback",
 );
 
-const signingKey = process.env.AUTH_SIGNING_KEY;
-
-function getUserRole(userId: string) {
-  return db
-    .select()
-    .from(schema.users)
-    .where(eq(schema.users.id, userId))
-    .then((users) => users[0].role);
-}
-
-export const discordAuth = {
-  logout: async (_req: IncomingMessage, res: ServerResponse) => {
-    // Discord doesn't provide token revocation, so we would have to create a custom solution. For now, we just delete the cookies.
-
-    deleteCookie(res, CookieNames.AccessToken);
-    deleteCookie(res, CookieNames.RefreshToken);
-    deleteCookie(res, CookieNames.JsonWebToken, {
-      path: "/",
-    });
-    deleteCookie(res, CookieNames.CodeVerifier, {
-      path: "/",
-    });
-  },
-  exchangePkceCode: async (url: URL, pkceCodeVerifier: string) => {
-    return await oidclient.authorizationCodeGrant(discordOauthConfig, url, {
-      pkceCodeVerifier,
-    });
-  },
-  getUserData: async (accessToken: string) => {
-    const userInfo = await oidclient.fetchProtectedResource(
-      discordOauthConfig,
-      accessToken,
-      new URL("https://discord.com/api/users/@me"),
-      "GET",
-    );
-    const userInfoJson = await userInfo.json();
-
-    if (userInfoJson.id === undefined) {
-      throw new Error("No user ID");
-    }
-    if (userInfoJson.username === undefined) {
-      throw new Error("No username");
-    }
-
-    return userInfoJson as UserInfo;
-  },
-  getJwt: async (userData: UserInfo) => {
-    return jwt.sign(
-      {
-        username: userData.username,
-        sub: userData.id,
-        iss: "https://discord.com",
-        aud: [process.env.DISCORD_CLIENT_ID],
-        role: userData.role,
-      },
-      signingKey,
-      {
-        expiresIn: "15m",
-        algorithm: "RS256",
-      },
-    );
-  },
-  refreshAccessToken: async (refreshToken: string) => {
-    const tokenSet = await oidclient.refreshTokenGrant(
-      discordOauthConfig,
-      refreshToken,
-    );
-    return tokenSet;
-  },
-  getCodeVerifierAndUrl: async (uri: string | undefined) => {
-    const codeVerifier = oidclient.randomPKCECodeVerifier();
-    const codeChallenge =
-      await oidclient.calculatePKCECodeChallenge(codeVerifier);
-    const parameters = {
-      redirect_uri: uri
-        ? `${uri}/auth/callback`
-        : "http://localhost:5173/auth/callback",
-      scope: "email identify",
-      code_challenge: codeChallenge,
-      code_challenge_method: "S256",
-    };
-    const url = oidclient.buildAuthorizationUrl(discordOauthConfig, parameters);
-    return { codeVerifier, url };
-  },
+export const logout = async (res: ServerResponse) => {
+  deleteCookie(res, "jwt", { path: "/" });
+  deleteCookie(res, "refreshToken", { path: "/" });
 };
 
-const setAuthCookies = async (
-  res: ServerResponse,
-  tokens: {
-    access_token?: string;
-    refresh_token?: string;
-    expires_in?: number;
-    jwt?: string;
-  },
-) => {
-  if (tokens.jwt)
-    setCookie(res, CookieNames.JsonWebToken, tokens.jwt, {
-      secure: true,
-      sameSite: "strict",
-      maxAge: 15 * 60,
-      path: "/",
-    });
-  if (tokens.refresh_token)
-    setCookie(res, CookieNames.RefreshToken, tokens.refresh_token, {
-      secure: true,
-      sameSite: "strict",
-    });
-  if (tokens.access_token)
-    setCookie(res, CookieNames.AccessToken, tokens.access_token, {
-      secure: true,
-      sameSite: "strict",
-      maxAge: tokens.expires_in,
-    });
-};
+export const storeJwt = async ({
+  accessToken,
+  refreshToken,
+  accessTokenExpiresAt,
+  res,
+}: {
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresAt: Date;
+  res: ServerResponse;
+}) => {
+  const userProfile = await getUserDiscordProfile(accessToken);
 
-export const exchangeOauthCodeAndSetCookies = async (
-  req: IncomingMessage,
-  res: ServerResponse,
-) => {
-  const codeVerifier = getCookie(req, CookieNames.CodeVerifier);
-
-  if (!req.headers.referer) {
-    throw new Error("No referer");
-  }
-  if (!codeVerifier) {
-    throw new Error("No code verifier");
-  }
-  const codeChallenge = await discordAuth.exchangePkceCode(
-    new URL(req.headers.referer),
-    codeVerifier,
+  const user = await verifyOrCreateUserInDatabase(
+    userProfile.id,
+    userProfile.username,
+    userProfile.email,
   );
 
-  const accessToken = codeChallenge.access_token;
-  const refreshToken = codeChallenge.refresh_token;
-  const userInfo = await discordAuth.getUserData(accessToken);
-  await verifyOrCreateUserInDatabase(
-    userInfo.id,
-    userInfo.username,
-    userInfo.email,
-  );
-  userInfo.role = await getUserRole(userInfo.id);
-  const jwt = await discordAuth.getJwt(userInfo);
+  const jwt = generateJwt(user, accessTokenExpiresAt);
 
-  setAuthCookies(res, {
-    access_token: accessToken,
-    refresh_token: refreshToken,
-    expires_in: codeChallenge.expires_in,
-    jwt,
+  setCookie(res, "jwt", jwt, {
+    secure: isProduction,
+    httpOnly: true,
+    path: "/",
   });
+  setCookie(res, "refreshToken", refreshToken, {
+    secure: isProduction,
+    httpOnly: true,
+    path: "/",
+  });
+
+  return jwt;
 };
 
-const validateAccessTokenFromReq = async (
-  req: IncomingMessage,
-  res: ServerResponse,
-) => {
-  const accessTokenCookie = getCookie(req, CookieNames.AccessToken);
+export const getUserDiscordProfile = async (accessToken: string) => {
+  const response = await fetch("https://discord.com/api/users/@me", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  const userProfile = (await response.json()) as UserProfile;
 
-  if (!accessTokenCookie) {
-    const refreshTokenCookie = getCookie(req, CookieNames.RefreshToken);
-    if (!refreshTokenCookie) {
-      return null;
-    }
-    const tokens = await discordAuth.refreshAccessToken(refreshTokenCookie);
-    await setAuthCookies(res, tokens);
-    return tokens.access_token;
-  }
-
-  return accessTokenCookie;
+  return userProfile;
 };
+
+export function generateJwt(profile: UserProfile, expiresAt: Date) {
+  return jwt.sign(
+    {
+      username: profile.username,
+      sub: profile.id,
+      iss: "https://discord.com",
+      aud: [process.env.DISCORD_CLIENT_ID],
+      role: profile.role,
+    },
+    signingKey,
+    {
+      expiresIn: Math.floor(expiresAt.getTime() / 1000),
+      algorithm: "RS256",
+    },
+  );
+}
 
 export const validateJwtFromReq = async (
   req: IncomingMessage,
   res: ServerResponse,
 ) => {
-  let jwtCookie = getCookie(req, CookieNames.JsonWebToken);
+  const jwtCookie = getCookie(req, "jwt");
   let verifiedJwt = null;
 
   if (!jwtCookie) {
-    const accessToken = await validateAccessTokenFromReq(req, res);
-    if (!accessToken) {
-      return null;
-    }
-    try {
-      jwtCookie = await discordAuth.getJwt(
-        await discordAuth.getUserData(accessToken),
-      );
-      setAuthCookies(res, { jwt: jwtCookie });
-    } catch {
-      return null;
-    }
+    return null;
   }
 
   try {
@@ -239,17 +118,29 @@ export const validateJwtFromReq = async (
     const jwtError = err as jwt.JsonWebTokenError;
     switch (jwtError.name) {
       case "TokenExpiredError": {
-        const accessToken = await validateAccessTokenFromReq(req, res);
-        if (!accessToken) {
+        const refreshTokenCookie = getCookie(req, "refreshToken");
+        if (!refreshTokenCookie) {
           return null;
         }
-        const newJwt = await discordAuth.getJwt(
-          await discordAuth.getUserData(accessToken),
-        );
-        setAuthCookies(res, { jwt: newJwt });
-        verifiedJwt = jwt.verify(newJwt, signingKey, {
-          audience: process.env.DISCORD_CLIENT_ID,
-        }) as { username: string; sub: string; role: string };
+        try {
+          const tokens = await discord.refreshAccessToken(refreshTokenCookie);
+          const accessToken = tokens.accessToken();
+          const accessTokenExpiresAt = tokens.accessTokenExpiresAt();
+          const refreshToken = tokens.refreshToken();
+
+          const jwtToken = await storeJwt({
+            accessToken,
+            refreshToken,
+            accessTokenExpiresAt,
+            res,
+          });
+
+          verifiedJwt = jwt.verify(jwtToken, signingKey, {
+            audience: process.env.DISCORD_CLIENT_ID,
+          }) as { username: string; sub: string; role: string };
+        } catch {
+          return null;
+        }
         break;
       }
     }

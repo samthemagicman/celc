@@ -34,7 +34,15 @@ const t = initTRPC.context<Context>().create();
  * that can be used throughout the router
  */
 export const router = t.router;
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(async (opts) => {
+  const userInfo = await validateJwtFromReq(opts.ctx.req!, opts.ctx.res!);
+
+  return opts.next({
+    ctx: {
+      userInfo,
+    },
+  });
+});
 // Authenticated procedure
 export const authProcedure = publicProcedure.use(async (opts) => {
   if (!opts.ctx.req) {

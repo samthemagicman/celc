@@ -37,4 +37,6 @@ export const verifyOrCreateUserInDatabase = async (
       })
       .execute();
   }
+
+  return user;
 };

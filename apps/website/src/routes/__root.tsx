@@ -1,6 +1,7 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { Navbar } from "~/components/navbar";
+import { useAuth } from "~/hooks/use-auth";
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === "production"
@@ -15,6 +16,10 @@ const TanStackRouterDevtools =
       );
 
 const MainRoute = () => {
+  const auth = useAuth();
+  useEffect(() => {
+    auth.fetchUserInfo();
+  }, []);
   return (
     <>
       <Navbar />

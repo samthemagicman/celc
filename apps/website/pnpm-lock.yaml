@@ -124,16 +124,6 @@ importers:
         specifier: ^5.4.8
         version: 5.4.8(@types/node@22.7.4)
 
-  ../..: {}
-
-  ../../packages/database: {}
-
-  ../../packages/trpc: {}
-
-  ../../packages/types: {}
-
-  ../api: {}
-
 packages:
 
   '@alloc/quick-lru@5.2.0':

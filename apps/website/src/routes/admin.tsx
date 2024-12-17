@@ -1,11 +1,11 @@
 import { DatabaseEvent } from "@repo/types/database";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { useAuth } from "~/components/auth";
 import { Calendar, CalendarEvent } from "~/components/calendar";
 import { AddEventModal } from "~/components/ui/admin/add-event-modal";
 import { EditEventModal } from "~/components/ui/admin/edit-event-modal";
 import { Button } from "~/components/ui/button";
+import { useAuth } from "~/hooks/use-auth";
 import { trpc } from "~/lib/api";
 import { cn } from "~/lib/utils";
 
@@ -14,7 +14,7 @@ type Event = DatabaseEvent;
 export const Route = createFileRoute("/admin")({
   component: MainComponent,
   loader: async () => {
-    const auth = useAuth.getState().getJwtPayload();
+    const auth = useAuth.getState().userInfo;
     if (!auth || auth.role !== "admin") {
       throw redirect({
         to: "/",
