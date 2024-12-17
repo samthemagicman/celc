@@ -102,7 +102,6 @@ export const EditEventModal: React.FC<EditEventProps> = ({
   const [title, setTitle] = useState(event.title);
   const [description, setDescription] = useState(event.description || "");
   const [day, setDay] = useState(event.day);
-  console.log(floatToRealTime(event.startHour));
   const [startTime, setStartTime] = useState(floatToRealTime(event.startHour));
   const [endTime, setEndTime] = useState(floatToRealTime(event.endHour));
   const [location, setLocation] = useState(event.location || "");

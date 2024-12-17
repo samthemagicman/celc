@@ -57,10 +57,14 @@ export const DraggableDiv = ({
     const walkY = y - mouseCoords.current.startY;
     slider.scrollLeft = mouseCoords.current.scrollLeft - walkX;
     slider.scrollTop = mouseCoords.current.scrollTop - walkY;
+
+    const movedMagnitude = Math.sqrt(walkX ** 2 + walkY ** 2);
     // slider.scrollTop =
     //   mouseCoords.current.scrollTop - (scrollYRoot ? 0 : walkY);
     // window.scrollBy(0, scrollYRoot ? -walkY : 0);
-    disableInnerDivEvents();
+
+    if (movedMagnitude > 10) disableInnerDivEvents();
+
     // setTimeout(enableInnerDivEvents, 100);
   };
 

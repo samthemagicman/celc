@@ -2,6 +2,7 @@ import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import React, { useEffect } from "react";
 import { Calendar } from "~/components/calendar";
 import { CalendarEventModal } from "~/components/calendar/calendar-event-modal";
+import { useAuth } from "~/hooks/use-auth";
 import { trpc } from "~/lib/api";
 
 export const Route = createFileRoute("/")({
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const loggedIn = useAuth((s) => s.isLoggedIn);
   const { events } = useLoaderData({
     from: "/",
   });
@@ -65,7 +67,7 @@ function Index() {
         onRequestClose={() => setModalOpen(false)}
         onRemoveEventFromCalendar={removeEventFromCalendar}
         onAddEventToCalendar={addEventToCalendar}
-        showAddButton={!isEventInUserCalendar}
+        showAddButton={!isEventInUserCalendar && loggedIn}
         showRemoveButton={isEventInUserCalendar}
       />
       <h1 className="text-xl font-bold my-4 text-center">Event Calendar</h1>

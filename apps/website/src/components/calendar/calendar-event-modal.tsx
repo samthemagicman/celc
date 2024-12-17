@@ -46,7 +46,7 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
           <p>{event?.description}</p>
         </ModalBody>
         <ModalFooter>
-          <div className="flex gap-3 justify-end">
+          <div className="flex gap-3 justify-end items-center">
             {showAddButton && (
               <Button onClick={onAddEventToCalendar}>
                 Add To Your Calendar
@@ -66,6 +66,12 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
               Close
             </Button>
           </div>
+
+          {!showAddButton && !showRemoveButton && (
+            <p className="text-muted-foreground text-sm italic mt-4">
+              Login to add this event to your calendar.
+            </p>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
