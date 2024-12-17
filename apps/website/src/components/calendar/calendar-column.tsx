@@ -31,10 +31,15 @@ const canPlaceInColumn = (event: DatabaseEvent, column: EventColumn) => {
 const organizeEvents = (events: EventColumn) => {
   const groupedEvents: EventColumnGroup = [];
 
-  //sort events by start time
-  // events.sort((a, b) => a.startHour - b.startHour);
   // sort by largest duration
-  events.sort((a, b) => b.endHour - b.startHour - (a.endHour - a.startHour));
+  // events.sort((a, b) => b.endHour - b.startHour - (a.endHour - a.startHour));
+  // sort events by color
+  events.sort((a, b) => {
+    if (a.backgroundColor && b.backgroundColor) {
+      return a.backgroundColor.localeCompare(b.backgroundColor);
+    }
+    return 0;
+  });
 
   for (const event of events) {
     let placed = false;
