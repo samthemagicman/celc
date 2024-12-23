@@ -36,7 +36,7 @@ export const useAuth = create(
         const authCode = url.searchParams.get("code");
         const urlState = url.searchParams.get("state");
         if (!authCode || !urlState) {
-          return;
+          throw new Error("No auth code or state");
         }
         await trpc.login.discord.exchangePkceCode.query({
           code: authCode,
