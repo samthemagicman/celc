@@ -41,6 +41,7 @@ const discordLoginRouter = router({
         throw new Error("No auth code");
       }
 
+      console.log("Exchanging code for tokens", { authCode });
       const tokens = await discord.validateAuthorizationCode(authCode);
       const accessToken = tokens.accessToken();
       const refreshToken = tokens.refreshToken();
