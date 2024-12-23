@@ -21,7 +21,6 @@ export const Route = createFileRoute("/admin")({
       });
     }
     const events = await trpc.event.getAllEvents.query();
-    console.log(events);
     return { events };
   },
 });

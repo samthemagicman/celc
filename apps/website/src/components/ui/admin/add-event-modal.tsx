@@ -26,7 +26,6 @@ const timeOptions = getTimeOptions(7, 24, 0.25);
 function getTimeOptions(from: number, to: number, interval: number) {
   const options = [];
   for (let i = from; i <= to; i += interval) {
-    console.log(i);
     options.push(floatToRealTime(i));
   }
   return options;
@@ -69,6 +68,7 @@ export const AddEventModal: React.FC<AddEventProps> = ({
   const [location, setLocation] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#FF4E13"); // Default color
   const [maxSignupCount, setMaxSignupCount] = useState<number | null>(null);
+  const [mandatory, setMandatory] = useState(false);
   //#FF4E13
   //Availble Day Options
   const dayOptions = [
@@ -110,6 +110,7 @@ export const AddEventModal: React.FC<AddEventProps> = ({
     setLocation("");
     setDay(0);
     setMaxSignupCount(0);
+    setMandatory(false);
   };
 
   //Creation of an event
@@ -131,6 +132,7 @@ export const AddEventModal: React.FC<AddEventProps> = ({
         id: 0,
         title,
         maxSignupCount: maxSignupCount,
+        mandatory: mandatory,
       });
 
       //Reset
@@ -272,6 +274,18 @@ export const AddEventModal: React.FC<AddEventProps> = ({
                   className="p-2 border border-gray-300 rounded w-full"
                 />
               </div>
+
+              <div className="flex items-center gap-3">
+                <label htmlFor="mandatory">Mandatory:</label>
+                <input
+                  id="mandatory"
+                  name="mandatory"
+                  type="checkbox"
+                  checked={mandatory}
+                  onChange={(e) => setMandatory(e.target.checked)}
+                />
+              </div>
+
               <label>
                 Background Color:
                 <div className="flex space-x-2 mt-2 items-stretch" about="test">

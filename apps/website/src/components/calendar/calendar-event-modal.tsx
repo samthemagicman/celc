@@ -60,18 +60,26 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
         </ModalBody>
         <ModalFooter>
           <div className="flex gap-3 justify-end items-center">
-            {showAddButton && (
-              <Button
-                onClick={onAddEventToCalendar}
-                disabled={addButtonDisabled}
-              >
-                Add To Your Calendar
-              </Button>
-            )}
-            {showRemoveButton && (
-              <Button onClick={onRemoveEventFromCalendar}>
-                Remove From Your Calendar
-              </Button>
+            {event?.mandatory === false ? (
+              <>
+                {showAddButton && (
+                  <Button
+                    onClick={onAddEventToCalendar}
+                    disabled={addButtonDisabled}
+                  >
+                    Add To Your Calendar
+                  </Button>
+                )}
+                {showRemoveButton && (
+                  <Button onClick={onRemoveEventFromCalendar}>
+                    Remove From Your Calendar
+                  </Button>
+                )}
+              </>
+            ) : (
+              <p className="text-muted-foreground italic mr-3">
+                Mandatory Event
+              </p>
             )}
             <Button
               onClick={onRequestClose}

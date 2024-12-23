@@ -91,15 +91,16 @@ export const EditEventModal: React.FC<EditEventProps> = ({
   //States for the form inputs
   //Format: var to hold current value, function to be called to update it, useState is init state
   const [title, setTitle] = useState(event.title);
-  const [description, setDescription] = useState(event.description || "");
+  const [description, setDescription] = useState(event.description ?? "");
   const [day, setDay] = useState(event.day);
   const [startTime, setStartTime] = useState(floatToRealTime(event.startHour));
   const [endTime, setEndTime] = useState(floatToRealTime(event.endHour));
-  const [location, setLocation] = useState(event.location || "");
+  const [location, setLocation] = useState(event.location ?? "");
   const [backgroundColor, setBackgroundColor] = useState(
     event.backgroundColor ?? colorOptions[0],
   ); // Default color
   const [maxSignupCount, setMaxSignupCount] = useState(event.maxSignupCount);
+  const [mandatory, setMandatory] = useState(event.mandatory);
   //#FF4E13
   //Availble Day Options
 
@@ -112,6 +113,7 @@ export const EditEventModal: React.FC<EditEventProps> = ({
     setLocation("");
     setDay(0);
     setMaxSignupCount(0);
+    setMandatory(false);
   };
 
   //Creation of an event
@@ -133,6 +135,7 @@ export const EditEventModal: React.FC<EditEventProps> = ({
         id: event.id,
         title,
         maxSignupCount,
+        mandatory: mandatory,
       });
 
       //Reset
@@ -274,6 +277,18 @@ export const EditEventModal: React.FC<EditEventProps> = ({
                   className="p-2 border border-gray-300 rounded w-full"
                 />
               </div>
+
+              <div className="flex items-center gap-3">
+                <label htmlFor="mandatory">Mandatory:</label>
+                <input
+                  id="mandatory"
+                  name="mandatory"
+                  type="checkbox"
+                  checked={mandatory}
+                  onChange={(e) => setMandatory(e.target.checked)}
+                />
+              </div>
+
               <label>
                 Background Color:
                 <div className="flex space-x-2 mt-2 items-stretch">

@@ -19,6 +19,7 @@ const UpdateEventInput = z.object({
   location: z.string().optional().nullable(),
   backgroundColor: z.string().optional().nullable(),
   maxSignupCount: z.number().optional().nullable(),
+  mandatory: z.boolean(),
   //this is for custom color
 });
 
@@ -51,6 +52,7 @@ export const eventRouter = router({
           endHour: input.endHour,
           location: input.location,
           maxSignupCount: input.maxSignupCount,
+          mandatory: input.mandatory,
         })
         .where(eq(schema.event.id, input.id));
     }),

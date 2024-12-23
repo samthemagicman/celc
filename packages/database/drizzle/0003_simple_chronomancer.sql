@@ -1,0 +1,1 @@
+ALTER TABLE `event` ADD `mandatory` integer DEFAULT false NOT NULL;

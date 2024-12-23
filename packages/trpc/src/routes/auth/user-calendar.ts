@@ -19,7 +19,9 @@ export const UserCalendarRouter = router({
       )
       .groupBy(schema.event.id);
 
-    const filteredEvents = data.filter((event) => event.userId === userId);
+    const filteredEvents = data.filter(
+      (event) => event.userId === userId || event.event.mandatory === true,
+    );
 
     const events = filteredEvents.map((event) => ({
       ...event.event,

@@ -10,6 +10,7 @@ export const event = sqliteTable("event", {
   day: int().notNull(),
   backgroundColor: text(),
   maxSignupCount: int(),
+  mandatory: int({ mode: "boolean" }).default(false).notNull(),
 });
 
 export const users = sqliteTable("users", {
