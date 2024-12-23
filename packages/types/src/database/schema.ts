@@ -9,6 +9,7 @@ export const event = sqliteTable("event", {
   endHour: real().notNull(),
   day: int().notNull(),
   backgroundColor: text(),
+  maxSignupCount: int(),
 });
 
 export const users = sqliteTable("users", {

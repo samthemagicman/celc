@@ -1,4 +1,4 @@
-import { eq } from "@repo/database";
+import { count, eq } from "@repo/database";
 import { EventInsert, schema } from "@repo/types/database";
 import { z } from "zod";
 import { adminProcedure, publicProcedure, router } from "../../trpc";
@@ -18,6 +18,7 @@ const UpdateEventInput = z.object({
   endHour: z.number().optional(),
   location: z.string().optional().nullable(),
   backgroundColor: z.string().optional().nullable(),
+  maxSignupCount: z.number().optional().nullable(),
   //this is for custom color
 });
 
@@ -49,13 +50,28 @@ export const eventRouter = router({
           startHour: input.startHour,
           endHour: input.endHour,
           location: input.location,
+          maxSignupCount: input.maxSignupCount,
         })
         .where(eq(schema.event.id, input.id));
     }),
   getAllEvents: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.select().from(schema.event);
-  }),
+    const data = await ctx.db
+      .select({
+        event: schema.event,
+        signupCount: count(schema.userEvents.id),
+      })
+      .from(schema.event)
+      .leftJoin(
+        schema.userEvents,
+        eq(schema.event.id, schema.userEvents.eventId),
+      )
+      .groupBy(schema.event.id);
 
+    return data.map((e) => ({
+      ...e.event,
+      signupCount: e.signupCount,
+    }));
+  }),
   deleteAllEvents: adminProcedure.mutation(async ({ ctx }) => {
     // Deletes all events without any conditions
     await ctx.db.delete(schema.event);

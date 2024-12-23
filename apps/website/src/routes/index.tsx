@@ -1,45 +1,75 @@
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import React, { useEffect } from "react";
 import { Calendar } from "~/components/calendar";
-import { CalendarEventModal } from "~/components/calendar/calendar-event-modal";
+import {
+  CalendarEventModal,
+  CalendarEventModalProps,
+} from "~/components/calendar/calendar-event-modal";
 import { useAuth } from "~/hooks/use-auth";
 import { trpc } from "~/lib/api";
 
 export const Route = createFileRoute("/")({
   component: Index,
   loader: async () => {
-    return { events: await trpc.event.getAllEvents.query() };
+    return { eventData: await trpc.event.getAllEvents.query() };
   },
   gcTime: 0,
   shouldReload: false,
 });
 
 function Index() {
+  const [modalError, setModalError] = React.useState<string | null>(null);
   const loggedIn = useAuth((s) => s.isLoggedIn);
-  const { events } = useLoaderData({
+  const { eventData } = useLoaderData({
     from: "/",
   });
+
+  const [events, setEvents] = React.useState(eventData);
+
+  function fetchEvents() {
+    trpc.event.getAllEvents
+      .query()
+      .then(setEvents)
+      .catch(() => {
+        console.log("Error fetching events");
+      });
+  }
+
   const [clickedEvent, setClickedEvent] = React.useState<
-    null | (typeof events)[0]
+    null | CalendarEventModalProps["event"]
   >(null);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [isEventInUserCalendar, setIsEventInUserCalendar] =
     React.useState<boolean>(false);
 
   async function addEventToCalendar() {
+    setModalError(null);
     if (!clickedEvent) return;
-    await trpc.userEvents.addUserEvent.mutate({ eventId: clickedEvent.id });
-    setIsEventInUserCalendar(true);
-    setModalOpen(false);
+    trpc.userEvents.addUserEvent
+      .mutate({ eventId: clickedEvent.id })
+      .then(() => {
+        setIsEventInUserCalendar(true);
+        setModalOpen(false);
+        fetchEvents();
+      })
+      .catch((e) => {
+        if (e instanceof Error) {
+          setModalError(e.message);
+        } else {
+          setModalError("An error occurred");
+        }
+      });
   }
 
   async function removeEventFromCalendar() {
+    setModalError(null);
     if (!clickedEvent) return;
     await trpc.userEvents.removeEventFromCalendar.mutate({
       eventId: clickedEvent.id,
     });
     setIsEventInUserCalendar(false);
     setModalOpen(false);
+    fetchEvents();
   }
 
   async function checkEventInUserCalendar() {
@@ -56,12 +86,28 @@ function Index() {
   }
 
   useEffect(() => {
+    setModalError(null);
     checkEventInUserCalendar();
   }, [clickedEvent]);
+
+  useEffect(() => {
+    if (
+      clickedEvent?.signupCount === clickedEvent?.maxSignupCount &&
+      !isEventInUserCalendar
+    ) {
+      setModalError("Event is full");
+    } else {
+      setModalError(null);
+    }
+  }, [clickedEvent, isEventInUserCalendar]);
 
   return (
     <div>
       <CalendarEventModal
+        error={modalError ?? undefined}
+        addButtonDisabled={
+          clickedEvent?.signupCount === clickedEvent?.maxSignupCount
+        }
         event={clickedEvent}
         isOpen={modalOpen}
         onRequestClose={() => setModalOpen(false)}

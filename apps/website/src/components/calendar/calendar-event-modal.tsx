@@ -1,4 +1,6 @@
+import { PersonIcon } from "@radix-ui/react-icons";
 import { DatabaseEvent } from "@repo/types/database";
+import Alert from "../ui/alert";
 import { Button } from "../ui/button";
 import {
   Modal,
@@ -10,14 +12,16 @@ import {
 } from "../ui/modal";
 import { numberToTime } from "./calendar-column";
 
-type CalendarEventModalProps = {
-  event: DatabaseEvent | null;
+export type CalendarEventModalProps = {
+  event: (DatabaseEvent & { signupCount?: number }) | null;
   isOpen: boolean;
   onRequestClose: () => void;
   onRemoveEventFromCalendar: () => void;
   onAddEventToCalendar: () => void;
   showRemoveButton?: boolean;
   showAddButton?: boolean;
+  addButtonDisabled?: boolean;
+  error?: string;
 };
 
 export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
@@ -28,18 +32,27 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
   onAddEventToCalendar,
   showAddButton,
   showRemoveButton,
+  error,
+  addButtonDisabled,
 }) => {
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
       <ModalContent>
         <ModalHeader>
           <ModalTitle>{event?.title}</ModalTitle>
-          <div className="text-sm">
-            <p>
-              {numberToTime(event?.startHour ?? 0, true)} -{" "}
-              {numberToTime(event?.endHour ?? 0, true)}
-            </p>
-            <p>{event?.location}</p>
+          <div className="space-y-1">
+            <div className="text-sm">
+              <p>
+                {numberToTime(event?.startHour ?? 0, true)} -{" "}
+                {numberToTime(event?.endHour ?? 0, true)}
+              </p>
+              <p>{event?.location}</p>
+            </div>
+            {event?.maxSignupCount && (
+              <p className="text-sm flex items-center gap-1">
+                <PersonIcon /> {event.signupCount}/{event.maxSignupCount} seats
+              </p>
+            )}
           </div>
         </ModalHeader>
         <ModalBody>
@@ -48,7 +61,10 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
         <ModalFooter>
           <div className="flex gap-3 justify-end items-center">
             {showAddButton && (
-              <Button onClick={onAddEventToCalendar}>
+              <Button
+                onClick={onAddEventToCalendar}
+                disabled={addButtonDisabled}
+              >
                 Add To Your Calendar
               </Button>
             )}
@@ -71,6 +87,12 @@ export const CalendarEventModal: React.FC<CalendarEventModalProps> = ({
             <p className="text-muted-foreground text-sm italic mt-4">
               Login to add this event to your calendar.
             </p>
+          )}
+
+          {error && (
+            <Alert variant="error" className="mt-3">
+              {error}
+            </Alert>
           )}
         </ModalFooter>
       </ModalContent>

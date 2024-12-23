@@ -15,6 +15,13 @@
       "when": 1732643737829,
       "tag": "0001_same_rictor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1734981175277,
+      "tag": "0002_ancient_iron_monger",
+      "breakpoints": true
     }
   ]
 }

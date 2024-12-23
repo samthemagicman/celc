@@ -99,6 +99,7 @@ export const EditEventModal: React.FC<EditEventProps> = ({
   const [backgroundColor, setBackgroundColor] = useState(
     event.backgroundColor ?? colorOptions[0],
   ); // Default color
+  const [maxSignupCount, setMaxSignupCount] = useState(event.maxSignupCount);
   //#FF4E13
   //Availble Day Options
 
@@ -110,6 +111,7 @@ export const EditEventModal: React.FC<EditEventProps> = ({
     setEndTime("8:30 A.M.");
     setLocation("");
     setDay(0);
+    setMaxSignupCount(0);
   };
 
   //Creation of an event
@@ -130,6 +132,7 @@ export const EditEventModal: React.FC<EditEventProps> = ({
         startHour: calculateRealTime(startTime),
         id: event.id,
         title,
+        maxSignupCount,
       });
 
       //Reset
@@ -203,6 +206,22 @@ export const EditEventModal: React.FC<EditEventProps> = ({
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label htmlFor="day">Max Signup Count</label>
+                <input
+                  type="number"
+                  defaultValue={maxSignupCount ?? undefined}
+                  onChange={(e) => {
+                    if (e.target.value === "") {
+                      setMaxSignupCount(null);
+                    } else {
+                      setMaxSignupCount(parseInt(e.target.value));
+                    }
+                  }}
+                  className="p-2 border border-gray-300 rounded w-full"
+                />
               </div>
 
               <div className="flex gap-3">

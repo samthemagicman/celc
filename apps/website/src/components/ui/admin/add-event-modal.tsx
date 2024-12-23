@@ -68,6 +68,7 @@ export const AddEventModal: React.FC<AddEventProps> = ({
   const [endTime, setEndTime] = useState("8:30 A.M.");
   const [location, setLocation] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#FF4E13"); // Default color
+  const [maxSignupCount, setMaxSignupCount] = useState<number | null>(null);
   //#FF4E13
   //Availble Day Options
   const dayOptions = [
@@ -108,6 +109,7 @@ export const AddEventModal: React.FC<AddEventProps> = ({
     setEndTime("8:30 A.M.");
     setLocation("");
     setDay(0);
+    setMaxSignupCount(0);
   };
 
   //Creation of an event
@@ -128,6 +130,7 @@ export const AddEventModal: React.FC<AddEventProps> = ({
         startHour: calculateRealTime(startTime),
         id: 0,
         title,
+        maxSignupCount: maxSignupCount,
       });
 
       //Reset
@@ -201,6 +204,22 @@ export const AddEventModal: React.FC<AddEventProps> = ({
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label htmlFor="day">Max Signup Count</label>
+                <input
+                  type="number"
+                  value={maxSignupCount ?? undefined}
+                  onChange={(e) => {
+                    if (e.target.value === "") {
+                      setMaxSignupCount(null);
+                    } else {
+                      setMaxSignupCount(parseInt(e.target.value));
+                    }
+                  }}
+                  className="p-2 border border-gray-300 rounded w-full"
+                />
               </div>
 
               <div className="flex gap-3">

@@ -21,6 +21,7 @@ export const Route = createFileRoute("/admin")({
       });
     }
     const events = await trpc.event.getAllEvents.query();
+    console.log(events);
     return { events };
   },
 });
@@ -54,7 +55,7 @@ function MainComponent() {
 
   async function updateEvent(eventData: Event) {
     await trpc.event.update.mutate(eventData);
-    Route.router?.invalidate();
+    window.location.reload();
   }
 
   async function saveEvents() {

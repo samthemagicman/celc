@@ -1,4 +1,4 @@
-import { and, db, eq, schema } from "@repo/database";
+import { and, count, db, eq, schema } from "@repo/database";
 import { z } from "zod";
 import { authProcedure, router } from "../../trpc";
 
@@ -6,17 +6,25 @@ export const UserCalendarRouter = router({
   getPersonalCalendar: authProcedure.query(async ({ ctx }) => {
     const userId = ctx.userInfo.userId; // Get user ID through auth procedure
 
-    // Fetch all event IDs for the logged-in user
-    const eventIds = await db
-      .select()
+    const data = await ctx.db
+      .select({
+        userId: schema.userEvents.userId,
+        event: schema.event,
+        signupCount: count(schema.userEvents.id),
+      })
       .from(schema.event)
       .leftJoin(
         schema.userEvents,
         eq(schema.event.id, schema.userEvents.eventId),
       )
-      .where(eq(schema.userEvents.userId, userId));
+      .groupBy(schema.event.id);
 
-    const events = eventIds.map((userEvent) => userEvent.event); // Correct variable name
+    const filteredEvents = data.filter((event) => event.userId === userId);
+
+    const events = filteredEvents.map((event) => ({
+      ...event.event,
+      signupCount: event.signupCount,
+    }));
 
     return events;
   }),
@@ -45,6 +53,28 @@ export const UserCalendarRouter = router({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userInfo.userId;
       const eventId = Number(input.eventId); // Convert eventId to a number
+
+      // check if user can be added
+
+      const data = await ctx.db
+        .select({
+          userId: schema.userEvents.userId,
+          event: schema.event,
+          signupCount: count(schema.userEvents.id),
+        })
+        .from(schema.event)
+        .leftJoin(
+          schema.userEvents,
+          eq(schema.event.id, schema.userEvents.eventId),
+        )
+        .groupBy(schema.event.id)
+        .where(eq(schema.event.id, eventId));
+
+      if (data[0].event.maxSignupCount !== null) {
+        if (data[0] && data[0].signupCount >= data[0].event.maxSignupCount) {
+          throw new Error("Event is full");
+        }
+      }
 
       // Insert a new record into the userEvents table
       await db.insert(schema.userEvents).values({
