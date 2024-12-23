@@ -1,9 +1,7 @@
-import { generateState } from "arctic";
 import { z } from "zod";
 import { discord, storeJwt } from "../../lib/auth";
-import { getCookie, setCookie } from "../../lib/cookies";
+import { getCookie } from "../../lib/cookies";
 import { publicProcedure, router } from "../../trpc";
-const isProduction = process.env.NODE_ENV === "production";
 
 const discordLoginRouter = router({
   exchangePkceCode: publicProcedure
@@ -54,20 +52,6 @@ const discordLoginRouter = router({
         res: ctx.res,
       });
     }),
-  query: publicProcedure.query(async ({ ctx }) => {
-    const state = generateState();
-    const scopes = ["email"];
-    const url = discord.createAuthorizationURL(state, scopes);
-
-    setCookie(ctx.res!, "state", state, {
-      secure: isProduction,
-      path: "/",
-      httpOnly: true,
-      maxAge: 60 * 10,
-    });
-
-    return url;
-  }),
 });
 
 export const loginRouter = router({

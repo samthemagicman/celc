@@ -4,7 +4,6 @@ import { trpc } from "~/lib/api";
 type AuthStore = {
   authState: "unknown" | "loggedOut" | "loggedIn";
   isLoggedIn: boolean;
-  startDiscordLogin: () => Promise<void>;
   exchangePkceCode: () => Promise<void>;
   logout: () => Promise<void>;
   userInfo: Awaited<ReturnType<typeof trpc.user.getInfo.query>> | null;
@@ -26,10 +25,6 @@ export const useAuth = create(
         } catch {
           set({ userInfo: null, authState: "unknown", isLoggedIn: false });
         }
-      },
-      startDiscordLogin: async () => {
-        const url = await trpc.login.discord.query.query();
-        window.open(url, "_self");
       },
       exchangePkceCode: async () => {
         const url = new URL(window.location.href);

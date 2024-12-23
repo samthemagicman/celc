@@ -19,6 +19,8 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
+        secure: process.env.NODE_ENV === "production",
+        cookieDomainRewrite: process.env.DOMAIN ?? "localhost",
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },

@@ -67,9 +67,6 @@ export const MobileNavMenu: React.FC<{ onButtonClicked: () => void }> = ({
   const auth = useAuth();
   const userInfo = auth.userInfo;
   const isLoggedIn = useAuth((s) => s.isLoggedIn);
-  function login() {
-    auth.startDiscordLogin();
-  }
   function logout() {
     auth.logout();
   }
@@ -89,12 +86,11 @@ export const MobileNavMenu: React.FC<{ onButtonClicked: () => void }> = ({
         );
       })}
       {!isLoggedIn ? (
-        <Button
-          onClick={login}
-          className="h-auto w-auto text-4xl bg-[#c4326d] hover:bg-[#c4326d]/90"
-        >
-          Login
-        </Button>
+        <a href="/api/login">
+          <Button className="h-auto w-auto text-4xl bg-[#c4326d] hover:bg-[#c4326d]/90">
+            Login
+          </Button>
+        </a>
       ) : (
         <Button
           onClick={logout}
@@ -114,9 +110,7 @@ export const Navbar: React.FC = () => {
   const isMobile = !useBreakpoint("sm");
   const [menuOpen, setMenuOpen] = React.useState(false);
   const isLoggedIn = useAuth((s) => s.isLoggedIn);
-  function login() {
-    auth.startDiscordLogin();
-  }
+
   function logout() {
     auth.logout();
   }
@@ -155,7 +149,9 @@ export const Navbar: React.FC = () => {
         ) : (
           <>
             {!isLoggedIn ? (
-              <Button onClick={login}>Login</Button>
+              <a href="/api/login">
+                <Button>Login</Button>
+              </a>
             ) : (
               <Button onClick={logout}>Logout</Button>
             )}
