@@ -11,6 +11,7 @@ import {
   ModalProps,
   ModalTitle,
 } from "~/components/ui/modal";
+import { trpc } from "~/lib/api";
 import { cn } from "~/lib/utils";
 const config = resolveConfig(tailwindConfig);
 
@@ -285,8 +286,13 @@ export const EditEventModal: React.FC<EditEventProps> = ({
                   variant={"destructive"}
                   type="button"
                   onClick={() => {
-                    modalProps.onRequestClose?.();
-                    resetForm();
+                    trpc.event.delete
+                      .mutate({
+                        id: event.id,
+                      })
+                      .then(() => {
+                        window.location.reload();
+                      });
                   }}
                   className="flex gap-3 w-full"
                 >
