@@ -41,21 +41,17 @@ const discordLoginRouter = router({
         throw new Error("No auth code");
       }
 
-      try {
-        const tokens = await discord.validateAuthorizationCode(authCode);
-        const accessToken = tokens.accessToken();
-        const refreshToken = tokens.refreshToken();
-        const accessTokenExpiresAt = tokens.accessTokenExpiresAt();
+      const tokens = await discord.validateAuthorizationCode(authCode);
+      const accessToken = tokens.accessToken();
+      const refreshToken = tokens.refreshToken();
+      const accessTokenExpiresAt = tokens.accessTokenExpiresAt();
 
-        await storeJwt({
-          accessToken,
-          refreshToken,
-          accessTokenExpiresAt,
-          res: ctx.res,
-        });
-      } catch (e) {
-        console.log(e);
-      }
+      await storeJwt({
+        accessToken,
+        refreshToken,
+        accessTokenExpiresAt,
+        res: ctx.res,
+      });
     }),
   query: publicProcedure.query(async ({ ctx }) => {
     let host = ctx.req?.headers.host ?? ctx.req?.headers["x-forwarded-host"];
