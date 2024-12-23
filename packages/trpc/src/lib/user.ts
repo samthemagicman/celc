@@ -5,14 +5,14 @@ export const verifyOrCreateUserInDatabase = async (
   username: string,
   email: string,
 ) => {
-  const user = await db
+  let user = await db
     .select()
     .from(schema.users)
     .where(eq(schema.users.id, discordId))
     .then((res) => res[0]);
 
   if (!user) {
-    await db
+    user = await db
       .insert(schema.users)
       .values({
         id: discordId,
@@ -20,7 +20,8 @@ export const verifyOrCreateUserInDatabase = async (
         email,
         role: "user",
       })
-      .execute();
+      .returning()
+      .then((res) => res[0]);
 
     //On Creation of a User, we inser first calendar event as default test
     const firstEvent = await db
