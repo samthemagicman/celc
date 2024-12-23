@@ -49,6 +49,8 @@ export const storeJwt = async ({
 }) => {
   const userProfile = await getUserDiscordProfile(accessToken);
 
+  console.log("Saving JWT for", { userProfile: userProfile });
+
   const user = await verifyOrCreateUserInDatabase(
     userProfile.id,
     userProfile.username,

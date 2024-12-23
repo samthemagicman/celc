@@ -50,7 +50,7 @@ app.use(express.json());
 
 app.get("/login", (_, res) => {
   const state = generateState();
-  const scopes = ["email"];
+  const scopes = ["email", "identify"];
   const url = discord.createAuthorizationURL(state, scopes);
 
   res.cookie("state", state, {
