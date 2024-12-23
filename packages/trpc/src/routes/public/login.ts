@@ -55,10 +55,6 @@ const discordLoginRouter = router({
       });
     }),
   query: publicProcedure.query(async ({ ctx }) => {
-    let host = ctx.req?.headers.host ?? ctx.req?.headers["x-forwarded-host"];
-    if (Array.isArray(host)) {
-      host = host[0];
-    }
     const state = generateState();
     const scopes = ["email"];
     const url = discord.createAuthorizationURL(state, scopes);
