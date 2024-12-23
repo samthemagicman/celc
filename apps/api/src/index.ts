@@ -57,7 +57,7 @@ app.get("/login", (_, res) => {
     secure: isProduction,
     path: "/",
     httpOnly: true,
-    maxAge: 60 * 10,
+    maxAge: 60 * 10 * 1000,
     sameSite: "lax",
     domain: process.env.DOMAIN ?? "localhost",
   });
