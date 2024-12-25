@@ -1,12 +1,30 @@
-import { and, count, db, eq, schema } from "@repo/database";
+import { and, count, db, eq, schema, sql } from "@repo/database";
 import { z } from "zod";
 import { authProcedure, router } from "../../trpc";
+
+const events = schema.event;
+const userEvents = schema.userEvents;
 
 export const UserCalendarRouter = router({
   getPersonalCalendar: authProcedure.query(async ({ ctx }) => {
     const userId = ctx.userInfo.userId; // Get user ID through auth procedure
 
     const data = await ctx.db
+      .select({
+        event: events,
+        signupCount: sql`(
+        SELECT COUNT(*) 
+        FROM ${userEvents} 
+        WHERE ${userEvents.eventId} = ${events.id}
+      )`.as("signupCount"),
+      })
+      .from(userEvents)
+      .innerJoin(events, eq(userEvents.eventId, events.id))
+      .where(eq(userEvents.userId, userId))
+      .groupBy(events.id, events.title)
+      .orderBy(events.title);
+
+    const mandatoryEvents = await ctx.db
       .select({
         userId: schema.userEvents.userId,
         event: schema.event,
@@ -17,18 +35,20 @@ export const UserCalendarRouter = router({
         schema.userEvents,
         eq(schema.event.id, schema.userEvents.eventId),
       )
-      .groupBy(schema.event.id);
+      .groupBy(schema.event.id)
+      .where(eq(schema.event.mandatory, true));
 
-    const filteredEvents = data.filter(
-      (event) => event.userId === userId || event.event.mandatory === true,
-    );
-
-    const events = filteredEvents.map((event) => ({
-      ...event.event,
-      signupCount: event.signupCount,
-    }));
-
-    return events;
+    return data
+      .map((event) => ({
+        ...event.event,
+        signupCount: event.signupCount,
+      }))
+      .concat(
+        mandatoryEvents.map((event) => ({
+          ...event.event,
+          signupCount: event.signupCount,
+        })),
+      );
   }),
 
   removeEventFromCalendar: authProcedure
