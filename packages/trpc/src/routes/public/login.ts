@@ -43,12 +43,10 @@ const discordLoginRouter = router({
       const tokens = await discord.validateAuthorizationCode(authCode);
       const accessToken = tokens.accessToken();
       const refreshToken = tokens.refreshToken();
-      const accessTokenExpiresAt = tokens.accessTokenExpiresAt();
 
       await storeJwt({
         accessToken,
         refreshToken,
-        accessTokenExpiresAt,
         res: ctx.res,
       });
     }),

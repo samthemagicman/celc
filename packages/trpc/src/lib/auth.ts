@@ -39,12 +39,10 @@ export const logout = async (res: ServerResponse) => {
 export const storeJwt = async ({
   accessToken,
   refreshToken,
-  accessTokenExpiresAt,
   res,
 }: {
   accessToken: string;
   refreshToken: string;
-  accessTokenExpiresAt: Date;
   res: ServerResponse;
 }) => {
   const userProfile = await getUserDiscordProfile(accessToken);
@@ -57,7 +55,7 @@ export const storeJwt = async ({
     userProfile.email,
   );
 
-  const jwt = generateJwt(user, accessTokenExpiresAt);
+  const jwt = generateJwt(user);
 
   setCookie(res, "jwt", jwt, {
     secure: isProduction,
@@ -84,7 +82,7 @@ export const getUserDiscordProfile = async (accessToken: string) => {
   return userProfile;
 };
 
-export function generateJwt(profile: UserProfile, expiresAt: Date) {
+export function generateJwt(profile: UserProfile) {
   return jwt.sign(
     {
       username: profile.username,
@@ -95,7 +93,7 @@ export function generateJwt(profile: UserProfile, expiresAt: Date) {
     },
     signingKey,
     {
-      expiresIn: Math.floor(expiresAt.getTime() / 1000),
+      expiresIn: "30d", // seconds
       algorithm: "RS256",
     },
   );
@@ -127,13 +125,11 @@ export const validateJwtFromReq = async (
         try {
           const tokens = await discord.refreshAccessToken(refreshTokenCookie);
           const accessToken = tokens.accessToken();
-          const accessTokenExpiresAt = tokens.accessTokenExpiresAt();
           const refreshToken = tokens.refreshToken();
 
           const jwtToken = await storeJwt({
             accessToken,
             refreshToken,
-            accessTokenExpiresAt,
             res,
           });
 
