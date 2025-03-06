@@ -1,6 +1,6 @@
 # CELC custom dashboard
 
-This repo holds all the code for the CELC custom dashboard.
+This repo holds all the code for the CELC custom dashboard, which is a calendar for the 2024 CELC event. It includes an auto-layout calendar with Discord login, event tracking, and an admin dashboard fir==or event editing/adding.
 
 The stack is:
 
